@@ -2,7 +2,7 @@
   const $=id=>document.getElementById(id);
   const user=(()=>{try{return JSON.parse(localStorage.getItem("destindereUser")||"null")}catch{return null}})();
   if(!user?.id){location.replace("login.html");return;}
-  let events=[],currentEvent=null,cfg=normalizeConfig({});
+  let events=[],currentEvent=null,cfg=normalizeConfig({});\n  let selectionToken=0;
   const pad=n=>String(n).padStart(2,"0");
   const localValue=v=>{if(!v)return "";const d=new Date(v);if(Number.isNaN(d.getTime()))return "";return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())+"T"+pad(d.getHours())+":"+pad(d.getMinutes())};
   const isoValue=v=>v?new Date(v).toISOString():"";
@@ -35,7 +35,7 @@
     cfg.location=cfg.location||{};cfg.location.title=$("locationTitle")?.value||"";cfg.location.name=$("locationName")?.value||"";cfg.location.mapUrl=$("mapUrl")?.value||"";
     cfg.participation=cfg.participation||{};cfg.participation.title=$("participationTitle")?.value||"";cfg.participation.description=$("participationDescription")?.value||"";cfg.participation.buttonText=$("participationButtonText")?.value||"";cfg.participation.productRows=Number($("participationProductRows")?.value||2);cfg.participation.visibility=$("participationVisibility")?.value||"manual";cfg.participation.afterStart=$("participationAfterStart")?.value||"hide";cfg.participation.fields={name:$("fieldName")?.checked||false,participation:$("fieldParticipation")?.checked||false,persons:$("fieldPersons")?.checked||false,products:$("fieldProducts")?.checked||false,notes:$("fieldNotes")?.checked||false};
     cfg.stats=cfg.stats||{};cfg.stats.title=$("statsTitle")?.value||"";cfg.stats.afterStart=$("statsAfterStart")?.value||"hide";cfg.food=cfg.food||{};cfg.food.title=$("foodTitle")?.value||"";cfg.food.description=$("foodDescription")?.value||"";cfg.food.hideCompleted=$("foodHideCompleted")?.checked||false;
-    if(currentEvent){currentEvent.activeFrom=isoValue($("activeFrom")?.value);currentEvent.activeUntil=isoValue($("activeUntil")?.value);}
+    if(currentEvent){\n      if(currentEvent.status==="ACTIV"){\n        currentEvent.activeFrom=isoValue($("activeFrom")?.value);\n        currentEvent.activeUntil=isoValue($("activeUntil")?.value);\n      }else{\n        currentEvent.activeFrom="";\n        currentEvent.activeUntil="";\n      }\n    }
     return cfg;
   }
 
@@ -55,14 +55,14 @@
     const a=$("activateEventBtn"),d=$("deleteEventBtn"),p=$("previewEventBtn");if(a)a.disabled=!currentEvent||currentEvent.status!=="PLANIFICAT";if(d)d.disabled=!currentEvent||currentEvent.status==="ACTIV";if(p)p.disabled=!currentEvent;
   }
 
-  async function selectEvent(id){const ev=await fetchEvent(id);currentEvent=ev;cfg=normalizeConfig(ev.config||{});renderEditor();renderEvents();}
-  async function refresh(){events=await fetchEvents();if(!events.length){currentEvent=null;renderEvents();return;}const keep=currentEvent?.id;const id=events.some(e=>e.id===keep)?keep:(events.find(e=>e.status==="ACTIV")||events[0]).id;await selectEvent(id);}
+  function normalizeEventClient(ev){\n    if(!ev)return ev;\n    ev=JSON.parse(JSON.stringify(ev));\n    ev.status=String(ev.status||"PLANIFICAT").toUpperCase();\n    if(ev.config){ev.config=normalizeConfig(ev.config);ev.config.event=ev.config.event||{};\n      const raw=String(ev.config.event.time||"");\n      const m=raw.match(/(\\d{1,2}):(\\d{2})/);\n      if(m)ev.config.event.time=pad(m[1])+":"+m[2];\n    }\n    if(ev.status!=="ACTIV"){ev.activeFrom="";ev.activeUntil="";}\n    return ev;\n  }\n  async function selectEvent(id){\n    const token=++selectionToken;\n    const ev=normalizeEventClient(await fetchEvent(id));\n    if(token!==selectionToken)return;\n    currentEvent=ev;cfg=normalizeConfig(ev.config||{});renderEditor();renderEvents();\n  }
+  async function refresh(){\n    const requestedToken=++selectionToken;\n    const loaded=(await fetchEvents()).map(normalizeEventClient);\n    if(requestedToken!==selectionToken)return;\n    events=loaded;\n    if(!events.length){currentEvent=null;renderEvents();return;}\n    const keep=currentEvent?.id;\n    const id=keep&&events.some(e=>e.id===keep)?keep:(events.find(e=>e.status==="ACTIV")||events[0]).id;\n    await selectEvent(id);\n  }
   async function save(){if(!currentEvent?.id)return;collect();const b=$("saveBtn"),s=$("saveState");if(b)b.disabled=true;if(s)s.textContent="Se salvează pentru „"+currentEvent.name+"”…";try{const saved=await saveEventCentral({...currentEvent,config:cfg},user.id);currentEvent=saved;cfg=normalizeConfig(saved.config||cfg);await refresh();if(s){s.textContent="✓ Salvat pentru evenimentul selectat";s.classList.add("saved");}}catch(e){alert(e.message||"Nu s-a putut salva evenimentul.");}finally{if(b)b.disabled=false;}}
-  async function create(){if(!currentEvent)return;collect();await saveEventCentral({...currentEvent,config:cfg},user.id);const ev=await createEventCentral(currentEvent.id,user.id);await refresh();await selectEvent(ev.id);}
+  async function create(){\n    if(!currentEvent)return;\n    collect();\n    await saveEventCentral({...currentEvent,config:cfg},user.id);\n    const ev=normalizeEventClient(await createEventCentral(currentEvent.id,user.id));\n    events=await fetchEvents();\n    await selectEvent(ev.id);\n  }
   async function activate(id=currentEvent?.id){if(!id)return;const ev=events.find(x=>x.id===id)||currentEvent;const from=id===currentEvent?.id?($("activeFrom")?.value||""):localValue(ev.activeFrom);const until=id===currentEvent?.id?($("activeUntil")?.value||""):localValue(ev.activeUntil);if(!from){alert("Completează „Activ din”.");return;}if(until&&new Date(until)<=new Date(from)){alert("„Activ până la” trebuie să fie după „Activ din”.");return;}await activateEventCentral(id,isoValue(from),isoValue(until),user.id);await refresh();}
   async function deleteEvent(id=currentEvent?.id){const ev=events.find(x=>x.id===id);if(!ev||ev.status==="ACTIV")return;if(!confirm("Ștergi definitiv „"+ev.name+"” și toate datele lui?"))return;await deleteEventCentral(id,user.id);currentEvent=null;await refresh();}
 
-  $("eventSelector")?.addEventListener("change",e=>selectEvent(e.target.value).catch(x=>alert(x.message)));
+  $("eventSelector")?.addEventListener("change",e=>{const id=e.target.value;selectEvent(id).catch(x=>alert(x.message));});
   $("saveBtn")?.addEventListener("click",()=>save().catch(x=>alert(x.message)));
   $("createEventBtn")?.addEventListener("click",()=>create().catch(x=>alert(x.message)));
   $("activateEventBtn")?.addEventListener("click",()=>activate().catch(x=>alert(x.message)));

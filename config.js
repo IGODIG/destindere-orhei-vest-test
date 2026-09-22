@@ -1,6 +1,6 @@
 /* Configurație centrală pentru repository-ul de test */
 const DEFAULT_CONFIG = {
-  apiUrl: "https://script.google.com/macros/s/AKfycbwuZAlb4ur5x2aJTWp0YbWWxi4f-R--Dc3uj0Y1dbCgv9bYyANEwRfTAE-2GzanRQuqw/exec",
+  apiUrl: "https://script.google.com/macros/s/AKfycbwoWCpAnPVs-kUEd6JBCRiV30ZRYsPfFP69s4PSK_8H5TYuhrzHjr6Q48UL1VodKMPQ/exec",
   event: {},
   countdown: {},
   gallery: { images: [] },

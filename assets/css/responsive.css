@@ -1,0 +1,269 @@
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+/* ==========================================================
+   LAPTOP
+========================================================== */
+
+@media (max-width: 1200px) {
+  .hero h1 {
+    font-size: 3.5rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(3, 150px);
+  }
+}
+
+/* ==========================================================
+   TABLET
+========================================================== */
+
+@media (max-width: 992px) {
+  section {
+    padding: 70px 0;
+  }
+
+  header nav {
+    flex-direction: column;
+
+    height: auto;
+
+    padding: 20px 0;
+  }
+
+  nav ul {
+    flex-wrap: wrap;
+
+    justify-content: center;
+
+    gap: 18px;
+
+    margin-top: 20px;
+  }
+
+  .hero h1 {
+    font-size: 3rem;
+  }
+
+  .hero h2 {
+    font-size: 1.5rem;
+  }
+
+  .countdown-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(3, 150px);
+
+    justify-content: center;
+  }
+
+  .register form {
+    padding: 35px;
+  }
+
+  /* FOOD */
+
+  #foodProgress {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ==========================================================
+   MOBILE
+========================================================== */
+
+@media (max-width: 768px) {
+  body {
+    font-size: 15px;
+  }
+
+  .hero {
+    min-height: 90vh;
+
+    padding: 120px 20px 60px;
+  }
+
+  .hero h1 {
+    font-size: 2.4rem;
+  }
+
+  .hero h2 {
+    font-size: 1.2rem;
+  }
+
+  .hero p {
+    font-size: 1rem;
+  }
+
+  .btn {
+    width: 100%;
+
+    max-width: 320px;
+  }
+
+  /* COUNTDOWN */
+
+  .countdown-grid {
+    grid-template-columns: repeat(2, 1fr);
+
+    gap: 15px;
+  }
+
+  .countdown-card {
+    padding: 25px 15px;
+  }
+
+  .countdown-card span {
+    font-size: 2.3rem;
+  }
+
+  /* FEATURES */
+
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .feature-card {
+    padding: 35px 25px;
+  }
+
+  /* STATS */
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 150px);
+
+    justify-content: center;
+
+    gap: 15px;
+  }
+
+  /* REGISTER */
+
+  .register form {
+    padding: 25px;
+  }
+
+  /* FOOD */
+
+  #foodProgress {
+    grid-template-columns: 1fr;
+
+    max-width: 650px;
+  }
+
+  /* MAP */
+
+  .map iframe {
+    height: 350px;
+  }
+
+  footer {
+    font-size: 0.9rem;
+  }
+}
+
+/* ==========================================================
+   SMALL MOBILE
+========================================================== */
+
+@media (max-width: 480px) {
+  .hero h1 {
+    font-size: 2rem;
+  }
+
+  .hero h2 {
+    font-size: 1rem;
+  }
+
+  section h2 {
+    font-size: 1.8rem;
+  }
+
+  /* COUNTDOWN */
+
+  .countdown-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .countdown-card span {
+    font-size: 2rem;
+  }
+
+  /* HEADER */
+
+  .logo {
+    font-size: 1.1rem;
+  }
+
+  nav ul {
+    gap: 12px;
+
+    font-size: 0.9rem;
+  }
+
+  /* REGISTER */
+
+  .register input,
+  .register select,
+  .register textarea,
+  .register button {
+    font-size: 0.95rem;
+  }
+
+  /* STATS */
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 140px);
+
+    gap: 12px;
+  }
+
+  .stat-card {
+    width: 140px;
+
+    height: 140px;
+  }
+
+  /* FOOD */
+
+  #foodProgress {
+    grid-template-columns: 1fr;
+
+    gap: 16px;
+  }
+
+  #foodProgress .food-card {
+    grid-template-columns: 58px 1fr;
+
+    min-height: 160px;
+
+    padding: 18px;
+
+    gap: 14px;
+  }
+
+  #foodProgress .food-card-icon {
+    width: 58px;
+    height: 58px;
+
+    min-width: 58px;
+
+    font-size: 28px;
+  }
+
+  #foodProgress .food-card-content h3 {
+    font-size: 0.9rem;
+  }
+
+  #foodProgress .food-progress {
+    height: 10px;
+  }
+}

@@ -90,3 +90,11 @@ select{display:block;width:100%;margin-top:6px;padding:10px 11px;border:1px soli
  .event-manager-actions{grid-column:auto}
  .event-actions button{width:100%}
 }
+
+
+/* Event manager spacing + status control */
+.event-manager-list{margin-top:18px;margin-bottom:22px}
+.event-manager-row{margin-bottom:10px}
+.event-actions{margin-top:22px;padding-top:18px;gap:12px}
+.event-actions button{margin:0}
+#eventStatus{min-width:160px}

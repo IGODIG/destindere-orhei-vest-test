@@ -38,6 +38,8 @@ function normalizeConfig(c) {
   c.apiUrl = DEFAULT_CONFIG.apiUrl;
   return c;
 }
+const CONFIG = normalizeConfig({});
+
 async function apiGet(params) {
   const u = new URL(DEFAULT_CONFIG.apiUrl);
   Object.entries(params).forEach(([k,v]) => u.searchParams.set(k,v));

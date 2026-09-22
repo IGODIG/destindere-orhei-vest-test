@@ -1,4 +1,4 @@
-name: Deploy sandbox site
+name: Deploy test site
 
 on:
   push:
@@ -18,12 +18,8 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout sandbox branch
+      - name: Checkout current repository
         uses: actions/checkout@v4
-        with:
-          repository: IGODIG/destindere-orhei-vest
-          ref: multi-event-v2-sandbox
-          path: site
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -31,7 +27,7 @@ jobs:
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: site
+          path: .
 
       - name: Deploy to GitHub Pages
         id: deployment

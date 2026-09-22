@@ -11,124 +11,17 @@
 <link rel="stylesheet" href="./assets/css/animations.css">
 <link rel="stylesheet" href="./assets/css/responsive.css">
 <style>
-.gallery-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
-.gallery-card{background:#fff;border-radius:22px;overflow:hidden;box-shadow:var(--shadow);min-height:220px;display:flex;align-items:center;justify-content:center}
-.gallery-placeholder{width:100%;height:220px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,#fff8ef,#f5e8d8);color:var(--secondary);font-size:1.1rem}
-.gallery-placeholder span{font-size:3rem;margin-bottom:10px}
-.memory-card{max-width:760px;margin:auto;text-align:center;background:#fff;padding:42px;border-radius:28px;box-shadow:var(--shadow)}
-.memory-card p{color:var(--gray);margin:10px 0 25px}
-.location-name{text-align:center;color:var(--secondary);font-size:1.2rem;font-weight:600;margin-bottom:20px}
-.status-note{display:inline-block;margin-top:18px;padding:8px 16px;border-radius:999px;background:rgba(255,255,255,.18);color:#fff;font-size:.9rem}
-@media(max-width:900px){.gallery-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:560px){.gallery-grid{grid-template-columns:1fr}.hero h1{font-size:3rem}.hero h2{font-size:1.25rem}}
+.gallery-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}.gallery-card{background:#fff;border-radius:22px;overflow:hidden;box-shadow:var(--shadow);min-height:220px;position:relative}.gallery-card img{width:100%;height:220px;object-fit:cover}.gallery-missing{position:absolute;inset:0;display:none;place-items:center;background:linear-gradient(135deg,#fff8ef,#f5e8d8);color:#9a6b45}.gallery-missing span{font-size:3rem;display:block}.gallery-missing small{display:block;text-align:center}.map iframe{min-height:460px}.upload-card{max-width:760px;margin:auto;text-align:center;background:#fff;padding:42px;border-radius:28px;box-shadow:var(--shadow)}.memories-text{text-align:center}.food-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.food-card{background:#fff;border-radius:18px;padding:20px;box-shadow:var(--shadow)}.food-card-icon{font-size:2rem}.food-progress{height:10px;background:#eee;border-radius:999px;overflow:hidden}.food-progress-bar{height:100%;background:#b45309}.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}.stat-card{background:#fff;border-radius:18px;padding:20px;text-align:center}.stat-card span{font-size:2rem;font-weight:700}.product-row{display:grid;grid-template-columns:1fr 140px;gap:10px;margin-bottom:10px}@media(max-width:900px){.gallery-grid,.food-grid,.stats-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:560px){.gallery-grid,.food-grid,.stats-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-<header>
-<nav class="container">
-<div class="logo">🍂 Orhei-Vest</div>
-<ul id="mainNav">
-<li><a href="#home">Acasă</a></li>
-<li><a href="#event">Cum a fost</a></li>
-<li><a href="#gallery">Galerie</a></li>
-<li><a href="#memories">Adaugă poze</a></li>
-<li><a href="#location">Locație</a></li>
-</ul>
-</nav>
-</header>
-
-<main>
-<section class="hero" id="home">
-<div class="container">
-<h2 id="heroDate">20 Septembrie 2026</h2>
-<h1 id="heroTitle">DESTINDERE</h1>
-<h2 id="heroSubtitle">Iată ce bine și ce plăcut este ca frații să locuiască împreună în unitate!</h2>
-<p id="heroVerse">Ps. 133:1</p>
-<span class="status-note" id="eventStatus">ACTIV</span>
-</div>
-</section>
-
-<section class="features" id="event">
-<div class="container">
-<h2 class="section-title">Cum a fost?</h2>
-<div class="features-grid">
-<div class="feature-card"><div class="icon">🎶</div><h3>Muzică Live</h3></div>
-<div class="feature-card"><div class="icon">📸</div><h3>Photo Zone</h3></div>
-<div class="feature-card"><div class="icon">🎁</div><h3>O Surpriză Specială</h3></div>
-<div class="feature-card"><div class="icon">🎯</div><h3>Activități interesante</h3></div>
-<div class="feature-card"><div class="icon">☕</div><h3>Relaxare</h3></div>
-<div class="feature-card"><div class="icon">🍂</div><h3>Decor de Toamnă</h3></div>
-</div>
-</div>
-</section>
-
-<section class="gallery" id="gallery">
-<div class="container">
-<h2 class="section-title">Galerie</h2>
-<div class="gallery-grid">
-<div class="gallery-card"><div class="gallery-placeholder"><span>📷</span>Amintiri 1</div></div>
-<div class="gallery-card"><div class="gallery-placeholder"><span>📷</span>Amintiri 2</div></div>
-<div class="gallery-card"><div class="gallery-placeholder"><span>📷</span>Amintiri 3</div></div>
-<div class="gallery-card"><div class="gallery-placeholder"><span>📷</span>Amintiri 4</div></div>
-</div>
-<div style="text-align:center;margin-top:35px">
-<a id="driveLink" class="btn" target="_blank" rel="noopener noreferrer">📸 Vezi toate fotografiile în Google Drive</a>
-</div>
-</div>
-</section>
-
-<section id="memories">
-<div class="container">
-<h2 class="section-title">Amintiri de la destindere</h2>
-<div class="memory-card">
-<div style="font-size:3rem">📸</div>
-<h3>Încarcă fotografii și videoclipuri</h3>
-<p>Împărtășește momentele frumoase cu ceilalți participanți.</p>
-<a id="memoryDriveLink" class="btn" target="_blank" rel="noopener noreferrer">📁 Deschide spațiul pentru fotografii</a>
-</div>
-</div>
-</section>
-
-<section class="location" id="location">
-<div class="container">
-<h2 class="section-title">Locația evenimentului</h2>
-<div class="location-name" id="locationName">Poiana OV</div>
-<div class="map"><iframe id="mapFrame" title="Poiana OV"></iframe></div>
-</div>
-</section>
-</main>
-
-<footer><p id="footerText">© 2026 Destindere de Toamnă • Congregația Orhei-Vest</p></footer>
-
+<div class="leaves"></div>
+<header><nav class="container"><div class="logo" id="navLogo">🍂 Orhei-Vest</div><ul id="mainNav"></ul></nav></header>
+<main id="app"></main>
+<footer><p id="footerText"></p></footer>
 <script src="./config.js"></script>
-<script>
-(async function(){
-  const fallback={
-    event:{name:"Destindere de Toamnă",congregation:"Congregația Orhei-Vest",date:"2026-09-20",time:"22:55",location:"Poiana OV",heroTitle:"DESTINDERE",heroSubtitle:"Iată ce bine și ce plăcut este ca frații să locuiască împreună în unitate!",heroVerse:"Ps.133:1",footer:"© 2026 Destindere de Toamnă • Congregația Orhei-Vest"},
-    gallery:{driveUrl:"https://drive.google.com/drive/folders/1UrOCtN2ixkyoykDeaV43UakTHbn8DiKE?usp=sharing"},
-    location:{name:"Poiana OV",mapUrl:"https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d1910.036346085665!2d28.838144542019688!3d47.388544042061945!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40cbef00641c883f%3A0xc51ae9283bc54452!2sPoiana%20OV!5e0!3m2!1sen!2s!4v1786436855627!5m2!1sen!2s"}
-  };
-  let e=fallback;
-  try{
-    const r=await fetch(DEFAULT_CONFIG.apiUrl+"?type=event&eventId=EVT-001",{cache:"no-store"});
-    const d=await r.json();
-    if(d&&d.success&&d.event){
-      e={...fallback,event:{...fallback.event,...(d.event.config?.event||{}),date:d.event.date||fallback.event.date,time:d.event.time||fallback.event.time,location:d.event.location||fallback.event.location},gallery:{...fallback.gallery,...(d.event.config?.gallery||{})},location:{...fallback.location,...(d.event.config?.location||{})},status:d.event.status};
-    }
-  }catch(err){console.warn("Nu s-a putut încărca configurația evenimentului.",err)}
-  const ev=e.event||fallback.event;
-  document.getElementById("heroDate").textContent=ev.date?new Date(ev.date+"T12:00:00").toLocaleDateString("ro-RO",{day:"numeric",month:"long",year:"numeric"}):"";
-  document.getElementById("heroTitle").textContent=ev.heroTitle||"DESTINDERE";
-  document.getElementById("heroSubtitle").textContent=ev.heroSubtitle||"";
-  document.getElementById("heroVerse").textContent=ev.heroVerse||"Ps. 133:1";
-  document.getElementById("eventStatus").textContent=e.status||"ACTIV";
-  document.getElementById("footerText").textContent=ev.footer||fallback.event.footer;
-  const drive=(e.gallery&&e.gallery.driveUrl)||fallback.gallery.driveUrl;
-  document.getElementById("driveLink").href=drive;
-  document.getElementById("memoryDriveLink").href=drive;
-  document.getElementById("locationName").textContent=(e.location&&e.location.name)||ev.location||"Poiana OV";
-  document.getElementById("mapFrame").src=(e.location&&e.location.mapUrl)||fallback.location.mapUrl;
-})();
-</script>
+<script src="./assets/js/site.js"></script>
+<script src="./assets/js/upload.js"></script>
+<script src="./assets/js/google-sheet.js"></script>
 </body>
 </html>

@@ -2,7 +2,8 @@
   const $=id=>document.getElementById(id);
   const user=(()=>{try{return JSON.parse(localStorage.getItem("destindereUser")||"null")}catch{return null}})();
   if(!user?.id){location.replace("login.html");return;}
-  let events=[],currentEvent=null,cfg=normalizeConfig({});\n  let selectionToken=0;
+  let events=[],currentEvent=null,cfg=normalizeConfig({});
+  let selectionToken=0;
   const pad=n=>String(n).padStart(2,"0");
   const localValue=v=>{if(!v)return "";const d=new Date(v);if(Number.isNaN(d.getTime()))return "";return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())+"T"+pad(d.getHours())+":"+pad(d.getMinutes())};
   const isoValue=v=>v?new Date(v).toISOString():"";
@@ -35,7 +36,15 @@
     cfg.location=cfg.location||{};cfg.location.title=$("locationTitle")?.value||"";cfg.location.name=$("locationName")?.value||"";cfg.location.mapUrl=$("mapUrl")?.value||"";
     cfg.participation=cfg.participation||{};cfg.participation.title=$("participationTitle")?.value||"";cfg.participation.description=$("participationDescription")?.value||"";cfg.participation.buttonText=$("participationButtonText")?.value||"";cfg.participation.productRows=Number($("participationProductRows")?.value||2);cfg.participation.visibility=$("participationVisibility")?.value||"manual";cfg.participation.afterStart=$("participationAfterStart")?.value||"hide";cfg.participation.fields={name:$("fieldName")?.checked||false,participation:$("fieldParticipation")?.checked||false,persons:$("fieldPersons")?.checked||false,products:$("fieldProducts")?.checked||false,notes:$("fieldNotes")?.checked||false};
     cfg.stats=cfg.stats||{};cfg.stats.title=$("statsTitle")?.value||"";cfg.stats.afterStart=$("statsAfterStart")?.value||"hide";cfg.food=cfg.food||{};cfg.food.title=$("foodTitle")?.value||"";cfg.food.description=$("foodDescription")?.value||"";cfg.food.hideCompleted=$("foodHideCompleted")?.checked||false;
-    if(currentEvent){\n      if(currentEvent.status==="ACTIV"){\n        currentEvent.activeFrom=isoValue($("activeFrom")?.value);\n        currentEvent.activeUntil=isoValue($("activeUntil")?.value);\n      }else{\n        currentEvent.activeFrom="";\n        currentEvent.activeUntil="";\n      }\n    }
+    if(currentEvent){
+      if(currentEvent.status==="ACTIV"){
+        currentEvent.activeFrom=isoValue($("activeFrom")?.value);
+        currentEvent.activeUntil=isoValue($("activeUntil")?.value);
+      }else{
+        currentEvent.activeFrom="";
+        currentEvent.activeUntil="";
+      }
+    }
     return cfg;
   }
 
@@ -50,19 +59,94 @@
       return "<div class=\"event-manager-row "+(currentEvent?.id===e.id?"is-selected":"")+"\"><div class=\"event-manager-main\"><div class=\"event-manager-title\"><strong>"+esc(e.name||"Eveniment fără nume")+"</strong></div><div class=\"event-manager-meta\"><span>📅 "+esc(date)+"</span>"+(e.location?"<span>📍 "+esc(e.location)+"</span>":"")+"</div></div><span class=\"event-row-status "+esc(e.status)+"\">"+esc(e.status)+"</span><div class=\"event-manager-actions\"><button type=\"button\" data-open=\""+esc(e.id)+"\">👁 Vezi</button>"+(act?"<button type=\"button\" class=\"row-activate\" data-activate=\""+esc(e.id)+"\">🟢 Activează</button>":"")+(del?"<button type=\"button\" class=\"row-delete\" data-delete=\""+esc(e.id)+"\">🗑 Șterge</button>":"")+"</div></div>";
     }).join("");
     list?.querySelectorAll("[data-open]").forEach(b=>b.onclick=()=>selectEvent(b.dataset.open));
-    list?.querySelectorAll("[data-activate]").forEach(b=>b.onclick=()=>activateEvent(b.dataset.activate));
+    list?.querySelectorAll("[data-activate]").forEach(b=>b.onclick=()=>activate(b.dataset.activate));
     list?.querySelectorAll("[data-delete]").forEach(b=>b.onclick=()=>deleteEvent(b.dataset.delete));
     const a=$("activateEventBtn"),d=$("deleteEventBtn"),p=$("previewEventBtn");if(a)a.disabled=!currentEvent||currentEvent.status!=="PLANIFICAT";if(d)d.disabled=!currentEvent||currentEvent.status==="ACTIV";if(p)p.disabled=!currentEvent;
   }
 
-  function normalizeEventClient(ev){\n    if(!ev)return ev;\n    ev=JSON.parse(JSON.stringify(ev));\n    ev.status=String(ev.status||"PLANIFICAT").toUpperCase();\n    if(ev.config){ev.config=normalizeConfig(ev.config);ev.config.event=ev.config.event||{};\n      const raw=String(ev.config.event.time||"");\n      const m=raw.match(/(\\d{1,2}):(\\d{2})/);\n      if(m)ev.config.event.time=pad(m[1])+":"+m[2];\n    }\n    if(ev.status!=="ACTIV"){ev.activeFrom="";ev.activeUntil="";}\n    return ev;\n  }\n  async function selectEvent(id){\n    const token=++selectionToken;\n    const ev=normalizeEventClient(await fetchEvent(id));\n    if(token!==selectionToken)return;\n    currentEvent=ev;cfg=normalizeConfig(ev.config||{});renderEditor();renderEvents();\n  }
-  async function refresh(){\n    const requestedToken=++selectionToken;\n    const loaded=(await fetchEvents()).map(normalizeEventClient);\n    if(requestedToken!==selectionToken)return;\n    events=loaded;\n    if(!events.length){currentEvent=null;renderEvents();return;}\n    const keep=currentEvent?.id;\n    const id=keep&&events.some(e=>e.id===keep)?keep:(events.find(e=>e.status==="ACTIV")||events[0]).id;\n    await selectEvent(id);\n  }
-  async function save(){if(!currentEvent?.id)return;collect();const b=$("saveBtn"),s=$("saveState");if(b)b.disabled=true;if(s)s.textContent="Se salvează pentru „"+currentEvent.name+"”…";try{const saved=await saveEventCentral({...currentEvent,config:cfg},user.id);currentEvent=saved;cfg=normalizeConfig(saved.config||cfg);await refresh();if(s){s.textContent="✓ Salvat pentru evenimentul selectat";s.classList.add("saved");}}catch(e){alert(e.message||"Nu s-a putut salva evenimentul.");}finally{if(b)b.disabled=false;}}
-  async function create(){\n    if(!currentEvent)return;\n    collect();\n    await saveEventCentral({...currentEvent,config:cfg},user.id);\n    const ev=normalizeEventClient(await createEventCentral(currentEvent.id,user.id));\n    events=await fetchEvents();\n    await selectEvent(ev.id);\n  }
+  function normalizeEventClient(ev){
+    if(!ev)return ev;
+    ev=JSON.parse(JSON.stringify(ev));
+    ev.status=String(ev.status||"PLANIFICAT").toUpperCase();
+    if(ev.config){ev.config=normalizeConfig(ev.config);ev.config.event=ev.config.event||{};
+      const raw=String(ev.config.event.time||"");
+      const m=raw.match(/(\\d{1,2}):(\\d{2})/);
+      if(m)ev.config.event.time=pad(m[1])+":"+m[2];
+    }
+    if(ev.status!=="ACTIV"){ev.activeFrom="";ev.activeUntil="";}
+    return ev;
+  }
+  async function selectEvent(id){
+    const token=++selectionToken;
+    const ev=normalizeEventClient(await fetchEvent(id));
+    if(token!==selectionToken)return;
+    currentEvent=ev;cfg=normalizeConfig(ev.config||{});renderEditor();renderEvents();
+  }
+  async function refresh(){
+    const requestedToken=++selectionToken;
+    const loaded=(await fetchEvents()).map(normalizeEventClient);
+    if(requestedToken!==selectionToken)return;
+    events=loaded;
+    if(!events.length){currentEvent=null;renderEvents();return;}
+    const keep=currentEvent?.id;
+    const id=keep&&events.some(e=>e.id===keep)?keep:(events.find(e=>e.status==="ACTIV")||events[0]).id;
+    await selectEvent(id);
+  }
+  async function save(){
+    if(!currentEvent?.id)return;
+    const desiredStatus=$("eventStatus")?.value||currentEvent.status||"PLANIFICAT";
+    collect();
+    const b=$("saveBtn"),s=$("saveState");
+    if(b)b.disabled=true;
+    if(s)s.textContent="Se salvează pentru „"+(currentEvent.name||cfg.event?.name||"eveniment")+"”…";
+    try{
+      if(desiredStatus==="ACTIV"){
+        const from=$("activeFrom")?.value||"";
+        const until=$("activeUntil")?.value||"";
+        if(!from){alert("Pentru statusul ACTIV trebuie completat „Activ din”.");return;}
+        if(until&&new Date(until)<=new Date(from)){alert("„Activ până la” trebuie să fie după „Activ din”.");return;}
+        const savedCfg=await saveEventCentral({...currentEvent,status:currentEvent.status,config:cfg,activeFrom:currentEvent.activeFrom||"",activeUntil:currentEvent.activeUntil||""},user.id);
+        currentEvent=await activateEventCentral(currentEvent.id,isoValue(from),isoValue(until),user.id);
+        cfg=normalizeConfig(currentEvent.config||savedCfg.config||cfg);
+      }else{
+        currentEvent.status=desiredStatus;
+        currentEvent.activeFrom="";
+        currentEvent.activeUntil="";
+        const saved=await saveEventCentral({...currentEvent,config:cfg,status:desiredStatus,activeFrom:"",activeUntil:""},user.id);
+        currentEvent=saved;
+        cfg=normalizeConfig(saved.config||cfg);
+      }
+      await refresh();
+      if(s){s.textContent="✓ Salvat pentru evenimentul selectat";s.classList.add("saved");}
+    }catch(e){alert(e.message||"Nu s-a putut salva evenimentul.");}
+    finally{if(b)b.disabled=false;}
+  }
+  async function create(){
+    if(!currentEvent)return;
+    collect();
+    await saveEventCentral({...currentEvent,config:cfg},user.id);
+    const ev=normalizeEventClient(await createEventCentral(currentEvent.id,user.id));
+    events=await fetchEvents();
+    await selectEvent(ev.id);
+  }
   async function activate(id=currentEvent?.id){if(!id)return;const ev=events.find(x=>x.id===id)||currentEvent;const from=id===currentEvent?.id?($("activeFrom")?.value||""):localValue(ev.activeFrom);const until=id===currentEvent?.id?($("activeUntil")?.value||""):localValue(ev.activeUntil);if(!from){alert("Completează „Activ din”.");return;}if(until&&new Date(until)<=new Date(from)){alert("„Activ până la” trebuie să fie după „Activ din”.");return;}await activateEventCentral(id,isoValue(from),isoValue(until),user.id);await refresh();}
   async function deleteEvent(id=currentEvent?.id){const ev=events.find(x=>x.id===id);if(!ev||ev.status==="ACTIV")return;if(!confirm("Ștergi definitiv „"+ev.name+"” și toate datele lui?"))return;await deleteEventCentral(id,user.id);currentEvent=null;await refresh();}
 
-  $("eventSelector")?.addEventListener("change",e=>{const id=e.target.value;selectEvent(id).catch(x=>alert(x.message));});
+  $("eventSelector")?.addEventListener("change",e=>{
+    const id=e.target.value;
+    if(!id)return;
+    selectEvent(id).catch(x=>alert(x.message));
+  });
+  $("eventStatus")?.addEventListener("change",e=>{
+    const status=e.target.value;
+    if(status==="ACTIV"){
+      $("activeFrom")?.removeAttribute("disabled");
+      $("activeUntil")?.removeAttribute("disabled");
+    }else{
+      if($("activeFrom"))$("activeFrom").value="";
+      if($("activeUntil"))$("activeUntil").value="";
+    }
+  });
   $("saveBtn")?.addEventListener("click",()=>save().catch(x=>alert(x.message)));
   $("createEventBtn")?.addEventListener("click",()=>create().catch(x=>alert(x.message)));
   $("activateEventBtn")?.addEventListener("click",()=>activate().catch(x=>alert(x.message)));

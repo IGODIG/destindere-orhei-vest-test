@@ -23,6 +23,11 @@
     const f=cfg.participation?.fields||{};check("fieldName",f.name);check("fieldParticipation",f.participation);check("fieldPersons",f.persons);check("fieldProducts",f.products);check("fieldNotes",f.notes);
     set("statsTitle",cfg.stats?.title);set("statsAfterStart",cfg.stats?.afterStart||"hide");set("participationAfterStart",cfg.participation?.afterStart||"hide");set("foodTitle",cfg.food?.title);set("foodDescription",cfg.food?.description);check("foodHideCompleted",cfg.food?.hideCompleted);
     set("eventStatus",currentEvent?.status||"PLANIFICAT");set("activeFrom",localValue(currentEvent?.activeFrom));set("activeUntil",localValue(currentEvent?.activeUntil));
+    const statusEl=$("eventStatus"),fromEl=$("activeFrom"),untilEl=$("activeUntil");
+    const isActive=(currentEvent?.status||"PLANIFICAT")==="ACTIV";
+    if(statusEl) statusEl.value=currentEvent?.status||"PLANIFICAT";
+    if(fromEl) fromEl.disabled=!isActive;
+    if(untilEl) untilEl.disabled=!isActive;
     const badge=$("eventStatusBadge");if(badge){badge.textContent=currentEvent?.status||"PLANIFICAT";badge.dataset.status=currentEvent?.status||"PLANIFICAT";}
   }
 
@@ -37,7 +42,8 @@
     cfg.participation=cfg.participation||{};cfg.participation.title=$("participationTitle")?.value||"";cfg.participation.description=$("participationDescription")?.value||"";cfg.participation.buttonText=$("participationButtonText")?.value||"";cfg.participation.productRows=Number($("participationProductRows")?.value||2);cfg.participation.visibility=$("participationVisibility")?.value||"manual";cfg.participation.afterStart=$("participationAfterStart")?.value||"hide";cfg.participation.fields={name:$("fieldName")?.checked||false,participation:$("fieldParticipation")?.checked||false,persons:$("fieldPersons")?.checked||false,products:$("fieldProducts")?.checked||false,notes:$("fieldNotes")?.checked||false};
     cfg.stats=cfg.stats||{};cfg.stats.title=$("statsTitle")?.value||"";cfg.stats.afterStart=$("statsAfterStart")?.value||"hide";cfg.food=cfg.food||{};cfg.food.title=$("foodTitle")?.value||"";cfg.food.description=$("foodDescription")?.value||"";cfg.food.hideCompleted=$("foodHideCompleted")?.checked||false;
     if(currentEvent){
-      if(currentEvent.status==="ACTIV"){
+      const editorStatus=$("eventStatus")?.value||currentEvent.status||"PLANIFICAT";
+      if(editorStatus==="ACTIV"){
         currentEvent.activeFrom=isoValue($("activeFrom")?.value);
         currentEvent.activeUntil=isoValue($("activeUntil")?.value);
       }else{
@@ -70,7 +76,7 @@
     ev.status=String(ev.status||"PLANIFICAT").toUpperCase();
     if(ev.config){ev.config=normalizeConfig(ev.config);ev.config.event=ev.config.event||{};
       const raw=String(ev.config.event.time||"");
-      const m=raw.match(/(\\d{1,2}):(\\d{2})/);
+      const m=raw.match(/(\d{1,2}):(\d{2})/);
       if(m)ev.config.event.time=pad(m[1])+":"+m[2];
     }
     if(ev.status!=="ACTIV"){ev.activeFrom="";ev.activeUntil="";}
@@ -153,5 +159,11 @@
   $("deleteEventBtn")?.addEventListener("click",()=>deleteEvent().catch(x=>alert(x.message)));
   $("previewEventBtn")?.addEventListener("click",()=>currentEvent&&window.open("index.html?previewEvent="+encodeURIComponent(currentEvent.id),"_blank","noopener"));
   $("logoutAdmin")?.addEventListener("click",()=>{localStorage.removeItem("destindereUser");location.replace("login.html");});
-  refresh().catch(e=>{console.error(e);alert(e.message||"Nu s-au putut încărca evenimentele.");});
+  refresh().catch(e=>{
+    console.error(e);
+    const msg=e?.message||"Nu s-au putut încărca evenimentele.";
+    alert(msg==="Failed to fetch"
+      ?"Nu se poate contacta Google Apps Script. Verifică deployment-ul Web App și URL-ul din config.js."
+      :msg);
+  });
 })();

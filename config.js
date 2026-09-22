@@ -38,7 +38,7 @@ function normalizeConfig(c) {
   c.apiUrl = DEFAULT_CONFIG.apiUrl;
   return c;
 }
-const CONFIG = normalizeConfig({});
+var CONFIG = normalizeConfig({});
 
 async function apiGet(params) {
   const u = new URL(DEFAULT_CONFIG.apiUrl);

@@ -349,10 +349,25 @@
     const loaded=(await fetchEvents()).map(normalizeEventClient);
     if(requestedToken!==selectionToken)return;
     events=loaded;
+    // Randăm lista imediat. Dacă încărcarea configurației unui eveniment are o problemă,
+    // lista nu trebuie să dispară și adminul trebuie să rămână utilizabil.
+    currentEvent = currentEvent && events.some(e=>e.id===currentEvent.id)
+      ? events.find(e=>e.id===currentEvent.id)
+      : (events.find(e=>e.status==="ACTIV") || events[0] || null);
+    renderEvents();
     if(!events.length){currentEvent=null;renderEvents();return}
-    const keep=currentEvent?.id;
-    const id=keep&&events.some(e=>e.id===keep)?keep:(events.find(e=>e.status==="ACTIV")||events[0]).id;
-    await selectEvent(id);
+    const id=currentEvent.id;
+    try{
+      await selectEvent(id);
+    }catch(error){
+      console.error("Eroare la încărcarea configurației evenimentului:",error);
+      currentEvent=events.find(e=>e.id===id)||currentEvent;
+      cfg=normalizeConfig(currentEvent?.config||{});
+      renderEditor();
+      renderEvents();
+      const state=$("saveState");
+      if(state) state.textContent="Evenimentele au fost încărcate, dar configurația nu a putut fi deschisă.";
+    }
   }
 
   async function save(){

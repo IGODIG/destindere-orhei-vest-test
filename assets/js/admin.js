@@ -205,6 +205,10 @@
     document.querySelectorAll(".module-label-input").forEach(input=>{const id=input.dataset.labelFor;const m=getModule(id);if(m)m.label=input.value.trim()||META[id][1]});
     syncLegacyEnabled();
   }
+  function themeLabel(value){
+    const t=normalizeTheme(value||"auto");
+    return ({auto:"🔄 Automat",spring:"🌸 Primăvară",summer:"☀️ Vară",autumn:"🍂 Toamnă",winter:"❄️ Iarnă"})[t]||"🔄 Automat";
+  }
   function renderEvents(){
     const selector=$("eventSelector"),list=$("eventsList");
     if(selector){
@@ -222,10 +226,11 @@
           ? String(timeMatch[1]).padStart(2,"0")+":"+timeMatch[2]
           : "00:00";
         const locationValue=e.location||"";
+        const themeValue=normalizeTheme(e.theme||e.config?.event?.theme||"auto");
         const d=dateValue?new Date(dateValue+"T"+timeValue):null;
         const date=d&&!isNaN(d)?new Intl.DateTimeFormat("ro-RO",{day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit"}).format(d):"Dată nespecificată";
         const del=e.status!=="ACTIV",act=e.status==="PLANIFICAT",arch=e.status==="ACTIV";
-        return "<div class=\"event-manager-row "+(currentEvent?.id===e.id?"is-selected":"")+"\"><div class=\"event-manager-main\"><div class=\"event-manager-title\"><strong>"+esc(e.name||"Eveniment fără nume")+"</strong></div><div class=\"event-manager-meta\"><span>📅 "+esc(date)+"</span>"+(locationValue?"<span>📍 "+esc(locationValue)+"</span>":"")+"</div></div><span class=\"event-row-status "+esc(e.status)+"\">"+esc(e.status)+"</span><div class=\"event-manager-actions\"><button type=\"button\" data-open=\""+esc(e.id)+"\">👁 Vezi</button>"+(act?"<button type=\"button\" class=\"row-activate\" data-activate=\""+esc(e.id)+"\">🟢 Activează</button>":"")+(del?"<button type=\"button\" class=\"row-delete\" data-delete=\""+esc(e.id)+"\">🗑 Șterge</button>":"")+"</div></div>";
+        return "<div class=\"event-manager-row "+(currentEvent?.id===e.id?"is-selected":"")+"\"><div class=\"event-manager-main\"><div class=\"event-manager-title\"><strong>"+esc(e.name||"Eveniment fără nume")+"</strong></div><div class=\"event-manager-meta\"><span>📅 "+esc(date)+"</span>"+(locationValue?"<span>📍 "+esc(locationValue)+"</span>":"")+"<span>"+themeLabel(themeValue)+"</span>+"</div></div><span class=\"event-row-status "+esc(e.status)+"\">"+esc(e.status)+"</span><div class=\"event-manager-actions\"><button type=\"button\" data-open=\""+esc(e.id)+"\">👁 Vezi</button>"+(act?"<button type=\"button\" class=\"row-activate\" data-activate=\""+esc(e.id)+"\">🟢 Activează</button>":"")+(del?"<button type=\"button\" class=\"row-delete\" data-delete=\""+esc(e.id)+"\">🗑 Șterge</button>":"")+"</div></div>";
       }).join("");
       list.querySelectorAll("[data-open]").forEach(b=>b.onclick=()=>previewEvent(b.dataset.open));
       list.querySelectorAll("[data-activate]").forEach(b=>b.onclick=()=>activate(b.dataset.activate));

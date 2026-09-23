@@ -789,3 +789,63 @@ footer {
   .feature-card{min-height:150px;padding:25px 18px}
   .feature-card .icon{font-size:2.65rem}
 }
+
+
+/* ==========================================================
+   PUBLIC MODULES - VISUAL SYSTEM (aligned with PROD)
+========================================================== */
+
+/* Shared section rhythm */
+section{position:relative}
+.memories,.participation,.gallery,.features,.stats,.location{background:#f7f3ee}
+.memories .container,.participation .container,.gallery .container,.features .container,.stats .container,.location .container{display:block}
+
+/* Memories / upload */
+.memories-text{max-width:760px;margin:-8px auto 24px;text-align:center;color:var(--gray);font-size:.88rem}
+.upload-card{max-width:760px;margin:0 auto;background:rgba(255,255,255,.92);padding:30px 34px;border-radius:24px;box-shadow:var(--shadow);text-align:center}
+.upload-icon{font-size:1.8rem;margin-bottom:7px}
+.upload-card h3{font-size:1rem;color:var(--text);margin-bottom:9px}
+.upload-button{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:7px 12px;border:1px solid #e8e0d7;border-radius:8px;background:#fff;color:#6b625b;font-size:.78rem;cursor:pointer}
+.upload-submit{border:0;padding:11px 28px;font-size:.82rem;margin-top:8px}
+
+/* Features */
+.features-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;max-width:1080px;margin:auto}
+.feature-card{background:rgba(255,255,255,.92);border:1px solid rgba(255,255,255,.8);border-radius:18px;padding:27px 20px;min-height:132px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;box-shadow:var(--shadow)}
+.feature-card .icon{font-size:2.55rem;line-height:1;margin-bottom:13px}
+.feature-card h3{font-size:1rem;color:var(--secondary);margin:0;font-weight:700}
+
+/* Gallery */
+.gallery-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;max-width:1080px;margin:auto}
+.gallery-card{background:#fff;border-radius:12px;overflow:hidden;box-shadow:var(--shadow);height:120px;position:relative}
+.gallery-card img{width:100%;height:100%;object-fit:cover}
+.gallery-missing{position:absolute;inset:0;display:none;place-items:center;text-align:center;background:linear-gradient(135deg,#fff8ef,#f5e8d8);color:#9a6b45}
+.gallery-missing span{font-size:2.2rem;display:block}.gallery-missing small{font-size:.7rem}
+.gallery .btn{padding:12px 25px;font-size:.78rem;margin-top:18px}
+
+/* Participation */
+.participation> .container>p{text-align:center;max-width:720px;margin:-8px auto 22px;color:var(--gray);font-size:.82rem}
+#registrationForm{max-width:680px;margin:auto;padding:22px 28px}
+#registrationForm label{font-size:.78rem;font-weight:600;color:#5f574f}
+#registrationForm input,#registrationForm select,#registrationForm textarea{width:100%;margin-top:6px;padding:11px 13px;border:1px solid #e6dfd7;border-radius:10px;background:#fff;font:inherit;font-size:.78rem;color:#4b453f;outline:none}
+#registrationForm textarea{min-height:90px;resize:vertical}
+#registrationForm button{border:0;cursor:pointer;padding:11px 28px;font-size:.82rem}
+.product-row{display:grid;grid-template-columns:minmax(0,1fr) 120px;gap:9px;margin:8px 0}
+
+/* Statistics */
+.stats{background:#fffdf9}
+.stats-grid{display:flex;justify-content:center;gap:28px;max-width:700px;margin:auto}
+.stat-card{width:120px;min-height:105px;background:#fff;border-radius:16px;padding:15px;text-align:center;display:flex;flex-direction:column;justify-content:center;box-shadow:var(--shadow)}
+.stat-card span{font-size:1.65rem;font-weight:700;color:var(--primary);line-height:1.1}.stat-card div{font-size:.68rem;color:#6b625b;margin-top:7px}
+
+/* Food */
+.food-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;max-width:1000px;margin:auto}
+.food-card{background:#fff;border-radius:18px;padding:18px;box-shadow:var(--shadow)}
+.food-card-icon{font-size:2rem}.food-card h3{font-size:.95rem;color:var(--secondary);margin:6px 0 10px}.food-progress-label{font-size:.65rem;color:#8b8177}.food-progress-number{font-size:.75rem;font-weight:600;color:#5e564f;margin:3px 0 8px}.food-progress{height:9px;background:#eee5dc;border-radius:999px;overflow:hidden}.food-progress-bar{height:100%;background:linear-gradient(90deg,var(--primary),var(--gold));border-radius:999px}
+
+/* Location */
+.location{background:#fff}
+.location .section-title{margin-bottom:22px}.location p{text-align:center;color:var(--gray);font-size:.82rem;margin-bottom:16px}.map{max-width:1080px;margin:auto;overflow:hidden;border-radius:16px;box-shadow:var(--shadow)}.map iframe{display:block;width:100%;height:410px;min-height:410px;border:0}
+
+/* Responsive module system */
+@media(max-width:900px){.gallery-grid{grid-template-columns:repeat(2,1fr)}.features-grid,.food-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.gallery-grid,.features-grid,.food-grid{grid-template-columns:1fr}.stats-grid{gap:12px}.stat-card{width:110px}.upload-card{padding:24px 18px}.product-row{grid-template-columns:1fr}.gallery-card{height:180px}.map iframe{height:340px;min-height:340px}}

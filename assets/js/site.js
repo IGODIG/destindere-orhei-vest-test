@@ -46,13 +46,12 @@ const hero= '<section class="hero" id="home"'+heroStyle+'><div class="container"
       food:()=>section("food","food",`<h2 class="section-title">${esc(cfg.food?.title||"Vreau să contribui")}</h2>${cfg.food?.description?`<p class="food-description">${esc(cfg.food.description)}</p>`:""}<div id="foodProgress" class="food-grid">${(cfg.food?.products||[]).filter(x=>x.enabled!==false).map((p,index)=>`<article class="food-card" data-product-id="${attr(p.id||"")}" data-product-name="${attr(p.name||"")}" data-product-index="${index}"><div class="food-card-icon" aria-hidden="true">${esc(p.icon||"🍂")}</div><div class="food-card-content"><h3>${esc(p.name||"Produs")}</h3><p class="food-required-text">Necesar: ${esc(p.required||0)} ${esc(p.unit||"")}</p><div class="food-card-bottom"><span class="food-progress-label">PROGRES</span><strong class="food-progress-number">0 / ${esc(p.required||0)} ${esc(p.unit||"")}</strong></div><div class="food-progress" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Progres ${attr(p.name||"")}"><div class="food-progress-bar" style="width:0%"></div></div></div></article>`).join("")}</div>`),
       location:()=>section("location","location",`<h2 class="section-title">${esc(cfg.location?.title||"Locația evenimentului")}</h2><p style="text-align:center">${esc(cfg.location?.name||cfg.event?.location||"")}</p><div class="map"><iframe src="${attr(cfg.location?.mapUrl||"")}" width="100%" height="460" style="border:0" allowfullscreen loading="lazy"></iframe></div>`)
     };
+    const theme=applyTheme(cfg);
     app.innerHTML=hero+mods.map(m=>renderers[m.id]?renderers[m.id](): "").join("");
     window.dispatchEvent(new CustomEvent("site:rendered"));
     nav.innerHTML='<li><a href="#home">Acasă</a></li>'+mods.filter(m=>m.showInMenu!==false&&m.id!=="countdown").map(m=>'<li><a href="#'+(m.id==="features"?"event":(m.id==="participation"?"register":m.id))+'">'+esc(m.id==="features"?(started?cfg.features.menuAfter:cfg.features.menuBefore):(m.id==="food"?cfg.food.title:(m.id==="participation"?"Confirmă participarea":m.label)))+"</a></li>").join("");
     document.title=(cfg.event?.name||"Destindere")+" • "+(cfg.event?.congregation||"");
     document.getElementById("footerText").textContent=cfg.event?.footer||"";
-    applyTheme(cfg);
-    const theme=applyTheme(cfg);
     document.getElementById("navLogo").textContent=(THEME_META[theme]?.icon||"🌸")+" "+String(cfg.event?.congregation||"Orhei-Vest").replace("Congregația ","");
     startCountdownIfNeeded(cfg);
   }

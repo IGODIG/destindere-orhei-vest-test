@@ -32,7 +32,10 @@
     const heroStyle=heroImage
       ? ' style="background-image:linear-gradient(rgba(20,20,20,.45),rgba(20,20,20,.45)),url(\''+attr(heroImage)+'\')"'
       : "";
-    const hero= '<section class="hero" id="home"'+heroStyle+'><div class="container"><h2>'+esc(formatDate(cfg.event?.date))+'</h2><h1>'+esc(cfg.event?.heroTitle||cfg.event?.name||"DESTINDERE")+'</h1><h2>'+esc(cfg.event?.heroSubtitle||"")+'</h2><p class="hero-bible-ref">'+esc(cfg.event?.heroVerse||"")+'</p></div></section>';
+    const heroParticipationButton = moduleEnabled(cfg,"participation")
+  ? '<a class="hero-participation-btn" href="#register">'+esc(cfg.participation?.buttonText||"Confirmă participarea")+'</a>'
+  : "";
+const hero= '<section class="hero" id="home"'+heroStyle+'><div class="container"><h2>'+esc(formatDate(cfg.event?.date))+'</h2><h1>'+esc(cfg.event?.heroTitle||cfg.event?.name||"DESTINDERE")+'</h1><h2>'+esc(cfg.event?.heroSubtitle||"")+'</h2><p class="hero-bible-ref">'+esc(cfg.event?.heroVerse||"")+'</p>'+heroParticipationButton+'</div></section>';
     const renderers={
       countdown:()=>section("countdown","countdown",`<h2 class="section-title">${esc(cfg.countdown?.title||"Countdown")}</h2><div class="countdown-grid"><div class="countdown-card"><span id="days">00</span><small>Zile</small></div><div class="countdown-card"><span id="hours">00</span><small>Ore</small></div><div class="countdown-card"><span id="minutes">00</span><small>Minute</small></div><div class="countdown-card"><span id="seconds">00</span><small>Secunde</small></div></div>`),
       features:()=>section("event","features",`<h2 class="section-title">${esc(started?(cfg.features?.titleAfter||"Cum a fost?"):(cfg.features?.titleBefore||"Ce am pregătit?"))}</h2><div class="features-grid">${(cfg.features?.items||[]).filter(x=>x.enabled!==false).map(x=>`<div class="feature-card"><div class="icon">${esc(x.icon)}</div><h3>${esc(x.title)}</h3></div>`).join("")}</div>`),

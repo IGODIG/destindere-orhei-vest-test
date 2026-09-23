@@ -152,18 +152,18 @@
   function renderGallery(){
     const box=$("galleryList");if(!box)return;
     const images=Array.isArray(cfg.gallery.images)?cfg.gallery.images:[];
-    box.innerHTML=images.map((x,i)=>\`
+    box.innerHTML=images.map((x,i)=>`
       <div class="gallery-card-editor">
         <span class="row-drag">☰</span>
         <div class="gallery-thumb-wrap">
-          <img class="gallery-thumb" src="\${escAttr(x.src)}" alt="">
+          <img class="gallery-thumb" src="${escAttr(x.src)}" alt="">
           <span class="gallery-placeholder">🖼️</span>
         </div>
-        <input class="img-src" placeholder="Imagine / cale" value="\${esc(x.src)}">
-        <input class="img-title" placeholder="Titlu" value="\${esc(x.title)}">
-        <input class="img-alt" placeholder="Descriere / alt text" value="\${esc(x.alt)}">
+        <input class="img-src" placeholder="Imagine / cale" value="${esc(x.src)}">
+        <input class="img-title" placeholder="Titlu" value="${esc(x.title)}">
+        <input class="img-alt" placeholder="Descriere / alt text" value="${esc(x.alt)}">
         <button class="remove-btn remove-img" type="button">×</button>
-      </div>\`).join("");
+      </div>`).join("");
     box.querySelectorAll(".gallery-card-editor").forEach((row,i)=>{
       const thumb=row.querySelector(".gallery-thumb"),ph=row.querySelector(".gallery-placeholder");
       const sync=()=>{
@@ -183,14 +183,14 @@
   function renderFeatures(){
     const box=$("featuresList");if(!box)return;
     const items=Array.isArray(cfg.features.items)?cfg.features.items:[];
-    box.innerHTML=items.map((x,i)=>\`
+    box.innerHTML=items.map((x,i)=>`
       <div class="feature-row">
         <span class="row-drag">☰</span>
-        <input class="feature-icon" value="\${esc(x.icon)}">
-        <input class="feat-title" value="\${esc(x.title)}" placeholder="Titlu element">
-        <label class="switch-line"><input type="checkbox" class="feat-check" \${x.enabled!==false?"checked":""}><span class="switch"></span></label>
+        <input class="feature-icon" value="${esc(x.icon)}">
+        <input class="feat-title" value="${esc(x.title)}" placeholder="Titlu element">
+        <label class="switch-line"><input type="checkbox" class="feat-check" ${x.enabled!==false?"checked":""}><span class="switch"></span></label>
         <button class="remove-btn remove-feature" type="button">×</button>
-      </div>\`).join("");
+      </div>`).join("");
     box.querySelectorAll(".feature-row").forEach((row,i)=>{
       row.querySelector(".feature-icon").oninput=e=>cfg.features.items[i].icon=e.target.value;
       row.querySelector(".feat-title").oninput=e=>cfg.features.items[i].title=e.target.value;
@@ -202,16 +202,16 @@
   function renderFood(){
     const box=$("foodList");if(!box)return;
     const products=Array.isArray(cfg.food.products)?cfg.food.products:[];
-    box.innerHTML=products.map((x,i)=>\`
+    box.innerHTML=products.map((x,i)=>`
       <div class="food-row">
         <span class="row-drag">☰</span>
-        <input class="food-icon" value="\${esc(x.icon)}" title="Icon">
-        <input class="food-name" value="\${esc(x.name)}" placeholder="Produs">
-        <input class="food-required" type="number" min="0" step="0.1" value="\${esc(x.required)}" placeholder="Necesar">
-        <input class="food-unit" value="\${esc(x.unit)}" placeholder="Unitate">
-        <label class="switch-line food-active"><input type="checkbox" class="food-check" \${x.enabled!==false?"checked":""}><span class="switch"></span></label>
+        <input class="food-icon" value="${esc(x.icon)}" title="Icon">
+        <input class="food-name" value="${esc(x.name)}" placeholder="Produs">
+        <input class="food-required" type="number" min="0" step="0.1" value="${esc(x.required)}" placeholder="Necesar">
+        <input class="food-unit" value="${esc(x.unit)}" placeholder="Unitate">
+        <label class="switch-line food-active"><input type="checkbox" class="food-check" ${x.enabled!==false?"checked":""}><span class="switch"></span></label>
         <button class="remove-btn remove-food" type="button">×</button>
-      </div>\`).join("");
+      </div>`).join("");
     box.querySelectorAll(".food-row").forEach((row,i)=>{
       row.querySelector(".food-icon").oninput=e=>cfg.food.products[i].icon=e.target.value;
       row.querySelector(".food-name").oninput=e=>cfg.food.products[i].name=e.target.value;
@@ -225,12 +225,12 @@
   function renderStats(){
     const box=$("statsList");if(!box)return;
     const cards=Array.isArray(cfg.stats.cards)?cfg.stats.cards:[];
-    box.innerHTML=cards.map((x,i)=>\`
+    box.innerHTML=cards.map((x,i)=>`
       <div class="stat-row">
         <span class="row-drag">☰</span>
-        <input class="stat-label" value="\${esc(x.label)}">
-        <label class="switch-line"><input type="checkbox" class="stat-check" \${x.enabled!==false?"checked":""}><span class="switch"></span><span>Activ</span></label>
-      </div>\`).join("");
+        <input class="stat-label" value="${esc(x.label)}">
+        <label class="switch-line"><input type="checkbox" class="stat-check" ${x.enabled!==false?"checked":""}><span class="switch"></span><span>Activ</span></label>
+      </div>`).join("");
     box.querySelectorAll(".stat-row").forEach((row,i)=>{
       row.querySelector(".stat-label").oninput=e=>cfg.stats.cards[i].label=e.target.value;
       row.querySelector(".stat-check").onchange=e=>cfg.stats.cards[i].enabled=e.target.checked;

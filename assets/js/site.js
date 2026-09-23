@@ -28,7 +28,11 @@
   function render(cfg){
     const started=eventStarted(cfg);
     const mods=(cfg.modules||[]).filter(m=>m.id!=="hero"&&moduleEnabled(cfg,m.id));
-    const hero= '<section class="hero" id="home"><div class="container"><h2>'+esc(formatDate(cfg.event?.date))+'</h2><h1>'+esc(cfg.event?.heroTitle||cfg.event?.name||"DESTINDERE")+'</h1><h2>'+esc(cfg.event?.heroSubtitle||"")+'</h2><p class="hero-bible-ref">'+esc(cfg.event?.heroVerse||"")+'</p></div></section>';
+    const heroImage=String(cfg.event?.heroImage||"").trim();
+    const heroStyle=heroImage
+      ? ' style="background-image:linear-gradient(rgba(20,20,20,.45),rgba(20,20,20,.45)),url(\''+attr(heroImage)+'\')"'
+      : "";
+    const hero= '<section class="hero" id="home"'+heroStyle+'><div class="container"><h2>'+esc(formatDate(cfg.event?.date))+'</h2><h1>'+esc(cfg.event?.heroTitle||cfg.event?.name||"DESTINDERE")+'</h1><h2>'+esc(cfg.event?.heroSubtitle||"")+'</h2><p class="hero-bible-ref">'+esc(cfg.event?.heroVerse||"")+'</p></div></section>';
     const renderers={
       countdown:()=>section("countdown","countdown",`<h2 class="section-title">${esc(cfg.countdown?.title||"Countdown")}</h2><div class="countdown-grid"><div class="countdown-card"><span id="days">00</span><small>Zile</small></div><div class="countdown-card"><span id="hours">00</span><small>Ore</small></div><div class="countdown-card"><span id="minutes">00</span><small>Minute</small></div><div class="countdown-card"><span id="seconds">00</span><small>Secunde</small></div></div>`),
       features:()=>section("event","features",`<h2 class="section-title">${esc(started?(cfg.features?.titleAfter||"Cum a fost?"):(cfg.features?.titleBefore||"Ce am pregătit?"))}</h2><div class="features-grid">${(cfg.features?.items||[]).filter(x=>x.enabled!==false).map(x=>`<div class="feature-card"><div class="icon">${esc(x.icon)}</div><h3>${esc(x.title)}</h3></div>`).join("")}</div>`),
@@ -40,18 +44,6 @@
       location:()=>section("location","location",`<h2 class="section-title">${esc(cfg.location?.title||"Locația evenimentului")}</h2><p style="text-align:center">${esc(cfg.location?.name||cfg.event?.location||"")}</p><div class="map"><iframe src="${attr(cfg.location?.mapUrl||"")}" width="100%" height="460" style="border:0" allowfullscreen loading="lazy"></iframe></div>`)
     };
     app.innerHTML=hero+mods.map(m=>renderers[m.id]?renderers[m.id](): "").join("");
-    const heroEl=document.getElementById("home");
-    const heroImage=String(cfg.event?.heroImage||"").trim();
-    if(heroEl&&heroImage){
-      const img=document.createElement("img");
-      img.className="hero-configured-image";
-      img.alt="";
-      img.setAttribute("aria-hidden","true");
-      img.src=new URL(heroImage,location.href).href;
-      img.onload=()=>{heroEl.classList.add("has-configured-image")};
-      img.onerror=()=>{img.remove();heroEl.classList.remove("has-configured-image");console.warn("Imaginea Hero nu a putut fi încărcată:",heroImage)};
-      heroEl.appendChild(img);
-    }
     nav.innerHTML='<li><a href="#home">Acasă</a></li>'+mods.filter(m=>m.showInMenu!==false&&m.id!=="countdown").map(m=>'<li><a href="#'+(m.id==="features"?"event":(m.id==="participation"?"register":m.id))+'">'+esc(m.id==="features"?(started?cfg.features.menuAfter:cfg.features.menuBefore):(m.id==="food"?cfg.food.title:(m.id==="participation"?"Confirmă participarea":m.label)))+"</a></li>").join("");
     document.title=(cfg.event?.name||"Destindere")+" • "+(cfg.event?.congregation||"");
     document.getElementById("footerText").textContent=cfg.event?.footer||"";

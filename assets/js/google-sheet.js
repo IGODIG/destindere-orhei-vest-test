@@ -1,7 +1,9 @@
-document.addEventListener("DOMContentLoaded", function () {
+function initGoogleSheet() {
   const form = document.getElementById("registrationForm");
 
   const guestSelect = document.getElementById("guestSelect");
+
+  if (!form && !guestSelect && !document.getElementById("foodProgress") && !document.getElementById("invited")) return;
 
   const scriptURL = CONFIG.apiUrl;
 
@@ -158,6 +160,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
       .then(function (data) {
         console.log("Date Google Sheets:", data);
+
+        // Backend-ul este sursa de adevăr pentru evenimentul ACTIV.
+        // Folosim eventId din răspuns chiar dacă configurația paginii nu îl conține încă.
+        if (data.eventId) {
+          CONFIG.event = CONFIG.event || {};
+          CONFIG.event.eventId = data.eventId;
+        }
+
         populateProductSelects();
 
         // ==========================================
@@ -289,4 +299,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
   }
-});
+}
+
+window.addEventListener("DOMContentLoaded", initGoogleSheet);
+window.addEventListener("site:rendered", initGoogleSheet);

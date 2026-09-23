@@ -983,11 +983,21 @@ function getEventRows(ss) {
 function getEventsResponse(ss) {
   var events = getEventRows(ss);
   return jsonOutput({ success: true, events: events.map(function(e) {
+    var eventConfig = e.config && e.config.event ? e.config.event : {};
     return {
-      id:e.id, name:e.name, congregation:e.congregation, date:e.date, time:e.time,
-      location:e.location, status:e.status, storedStatus:e.storedStatus,
-      activeFrom:e.activeFrom, activeUntil:e.activeUntil, version:e.version,
-      updatedAt:e.updatedAt, updatedBy:e.updatedBy
+      id: e.id,
+      name: e.name || eventConfig.name || "",
+      congregation: e.congregation || eventConfig.congregation || "",
+      date: e.date || eventConfig.date || "",
+      time: e.time || eventConfig.time || "",
+      location: e.location || eventConfig.location || "",
+      status: e.status,
+      storedStatus: e.storedStatus,
+      activeFrom: e.activeFrom,
+      activeUntil: e.activeUntil,
+      version: e.version,
+      updatedAt: e.updatedAt,
+      updatedBy: e.updatedBy
     };
   }) });
 }

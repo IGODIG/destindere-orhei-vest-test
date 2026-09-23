@@ -45,102 +45,50 @@
   }
 
   function getModule(id){return cfg.modules.find(m=>m.id===id)}
-  function syncLegacyEnabled(){
-    MODULE_IDS.forEach(id=>{
-      const m=getModule(id);
-      if(m)cfg[id].enabled=!!m.enabled;
-    });
-  }
-
+  function syncLegacyEnabled(){MODULE_IDS.forEach(id=>{const m=getModule(id);if(m)cfg[id].enabled=!!m.enabled})}
   function syncPanelOrder(){
-    const wrap=$("settingsPanels"); if(!wrap)return;
+    const wrap=$("settingsPanels");if(!wrap)return;
     const rank=new Map(cfg.modules.map((m,i)=>[m.id,i]));
-    [...wrap.querySelectorAll(":scope > .accordion")]
-      .sort((a,b)=>(rank.get(a.dataset.panel)??999)-(rank.get(b.dataset.panel)??999))
-      .forEach(p=>wrap.appendChild(p));
+    [...wrap.querySelectorAll(":scope > .accordion")].sort((a,b)=>(rank.get(a.dataset.panel)??999)-(rank.get(b.dataset.panel)??999)).forEach(p=>wrap.appendChild(p));
   }
-
   function syncPanelHeaders(){
     cfg.modules.forEach(m=>{
-      const panel=document.querySelector('.accordion[data-panel="'+CSS.escape(m.id)+'"]');
-      if(!panel)return;
+      const panel=document.querySelector('.accordion[data-panel="'+CSS.escape(m.id)+'"]');if(!panel)return;
       panel.classList.toggle("module-inactive",!m.enabled);
       const status=panel.querySelector(".module-status");
-      if(status){
-        status.textContent=m.enabled?"● ACTIV":"○ INACTIV";
-        status.classList.toggle("is-off",!m.enabled);
-      }
-      const menu=panel.querySelector('[data-menu-for="'+CSS.escape(m.id)+'"]');
-      if(menu)menu.checked=m.showInMenu!==false;
+      if(status){status.textContent=m.enabled?"● ACTIV":"○ INACTIV";status.classList.toggle("is-off",!m.enabled)}
+      const menu=panel.querySelector('[data-menu-for="'+CSS.escape(m.id)+'"]');if(menu)menu.checked=m.showInMenu!==false;
       panel.draggable=true;
     });
   }
-
   function bindAccordion(){
     document.querySelectorAll(".accordion-head").forEach(btn=>{
-      if(btn.dataset.bound)return;
-      btn.dataset.bound="1";
-      btn.addEventListener("click",e=>{
-        if(e.target.closest(".module-status,.menu-toggle"))return;
-        btn.closest(".accordion")?.classList.toggle("open");
-      });
+      if(btn.dataset.bound)return;btn.dataset.bound="1";
+      btn.addEventListener("click",e=>{if(e.target.closest(".module-status,.menu-toggle"))return;btn.closest(".accordion")?.classList.toggle("open")});
     });
     document.querySelectorAll(".module-status").forEach(status=>{
-      if(status.dataset.bound)return;
-      status.dataset.bound="1";
-      status.addEventListener("click",e=>{
-        e.stopPropagation();
-        const m=getModule(status.dataset.statusFor);
-        if(!m)return;
-        m.enabled=!m.enabled;
-        syncLegacyEnabled();
-        syncPanelHeaders();
-      });
+      if(status.dataset.bound)return;status.dataset.bound="1";
+      status.addEventListener("click",e=>{e.stopPropagation();const m=getModule(status.dataset.statusFor);if(!m)return;m.enabled=!m.enabled;syncLegacyEnabled();syncPanelHeaders()});
     });
     document.querySelectorAll(".menu-toggle").forEach(label=>{
-      if(label.dataset.bound)return;
-      label.dataset.bound="1";
+      if(label.dataset.bound)return;label.dataset.bound="1";
       label.addEventListener("click",e=>e.stopPropagation());
       const input=label.querySelector("input");
-      input?.addEventListener("change",e=>{
-        const m=getModule(input.dataset.menuFor);
-        if(m)m.showInMenu=e.target.checked;
-      });
+      input?.addEventListener("change",e=>{const m=getModule(input.dataset.menuFor);if(m)m.showInMenu=e.target.checked});
     });
   }
-
   function bindSortable(){
     const wrap=$("settingsPanels");if(!wrap)return;
     let dragging=null;
     wrap.querySelectorAll(":scope > .accordion").forEach(panel=>{
-      if(panel.dataset.dragBound)return;
-      panel.dataset.dragBound="1";
-      panel.addEventListener("dragstart",e=>{
-        dragging=panel;panel.classList.add("dragging-module");
-        e.dataTransfer.effectAllowed="move";
-        e.dataTransfer.setData("text/plain",panel.dataset.panel);
-      });
-      panel.addEventListener("dragend",()=>{
-        panel.classList.remove("dragging-module");
-        dragging=null;
-        wrap.querySelectorAll(".drag-over-module").forEach(x=>x.classList.remove("drag-over-module"));
-      });
-      panel.addEventListener("dragover",e=>{
-        e.preventDefault();
-        if(!dragging||dragging===panel)return;
-        panel.classList.add("drag-over-module");
-      });
+      if(panel.dataset.dragBound)return;panel.dataset.dragBound="1";
+      panel.addEventListener("dragstart",e=>{dragging=panel;panel.classList.add("dragging-module");e.dataTransfer.effectAllowed="move";e.dataTransfer.setData("text/plain",panel.dataset.panel)});
+      panel.addEventListener("dragend",()=>{panel.classList.remove("dragging-module");dragging=null;wrap.querySelectorAll(".drag-over-module").forEach(x=>x.classList.remove("drag-over-module"))});
+      panel.addEventListener("dragover",e=>{e.preventDefault();if(!dragging||dragging===panel)return;panel.classList.add("drag-over-module")});
       panel.addEventListener("dragleave",()=>panel.classList.remove("drag-over-module"));
-      panel.addEventListener("drop",e=>{
-        e.preventDefault();panel.classList.remove("drag-over-module");
-        if(!dragging||dragging===panel)return;
-        const rect=panel.getBoundingClientRect();
-        wrap.insertBefore(dragging,e.clientY<rect.top+rect.height/2?panel:panel.nextSibling);
-        syncOrderFromDOM();
-      });
+      panel.addEventListener("drop",e=>{e.preventDefault();panel.classList.remove("drag-over-module");if(!dragging||dragging===panel)return;const rect=panel.getBoundingClientRect();wrap.insertBefore(dragging,e.clientY<rect.top+rect.height/2?panel:panel.nextSibling);syncOrderFromDOM()});
     });
   }
-
   function syncOrderFromDOM(){
     const wrap=$("settingsPanels");if(!wrap)return;
     const ids=[...wrap.querySelectorAll(":scope > .accordion")].map(p=>p.dataset.panel);
@@ -148,29 +96,13 @@
     cfg.modules=ids.map(id=>byId.get(id)).filter(Boolean);
     syncLegacyEnabled();
   }
-
   function renderGallery(){
     const box=$("galleryList");if(!box)return;
     const images=Array.isArray(cfg.gallery.images)?cfg.gallery.images:[];
-    box.innerHTML=images.map((x,i)=>`
-      <div class="gallery-card-editor">
-        <span class="row-drag">☰</span>
-        <div class="gallery-thumb-wrap">
-          <img class="gallery-thumb" src="${escAttr(x.src)}" alt="">
-          <span class="gallery-placeholder">🖼️</span>
-        </div>
-        <input class="img-src" placeholder="Imagine / cale" value="${esc(x.src)}">
-        <input class="img-title" placeholder="Titlu" value="${esc(x.title)}">
-        <input class="img-alt" placeholder="Descriere / alt text" value="${esc(x.alt)}">
-        <button class="remove-btn remove-img" type="button">×</button>
-      </div>`).join("");
+    box.innerHTML=images.map((x,i)=>`<div class="gallery-card-editor"><span class="row-drag">☰</span><div class="gallery-thumb-wrap"><img class="gallery-thumb" src="${escAttr(x.src)}" alt=""><span class="gallery-placeholder">🖼️</span></div><input class="img-src" placeholder="Imagine / cale" value="${esc(x.src)}"><input class="img-title" placeholder="Titlu" value="${esc(x.title)}"><input class="img-alt" placeholder="Descriere / alt text" value="${esc(x.alt)}"><button class="remove-btn remove-img" type="button">×</button></div>`).join("");
     box.querySelectorAll(".gallery-card-editor").forEach((row,i)=>{
       const thumb=row.querySelector(".gallery-thumb"),ph=row.querySelector(".gallery-placeholder");
-      const sync=()=>{
-        const src=cfg.gallery.images[i]?.src||"";
-        if(src){thumb.style.display="block";ph.style.display="none";thumb.src=src}
-        else {thumb.style.display="none";ph.style.display="grid"}
-      };
+      const sync=()=>{const src=cfg.gallery.images[i]?.src||"";if(src){thumb.style.display="block";ph.style.display="none";thumb.src=src}else{thumb.style.display="none";ph.style.display="grid"}};
       row.querySelector(".img-src").oninput=e=>{cfg.gallery.images[i].src=e.target.value;sync()};
       row.querySelector(".img-title").oninput=e=>cfg.gallery.images[i].title=e.target.value;
       row.querySelector(".img-alt").oninput=e=>cfg.gallery.images[i].alt=e.target.value;
@@ -179,18 +111,10 @@
       sync();
     });
   }
-
   function renderFeatures(){
     const box=$("featuresList");if(!box)return;
     const items=Array.isArray(cfg.features.items)?cfg.features.items:[];
-    box.innerHTML=items.map((x,i)=>`
-      <div class="feature-row">
-        <span class="row-drag">☰</span>
-        <input class="feature-icon" value="${esc(x.icon)}">
-        <input class="feat-title" value="${esc(x.title)}" placeholder="Titlu element">
-        <label class="switch-line"><input type="checkbox" class="feat-check" ${x.enabled!==false?"checked":""}><span class="switch"></span></label>
-        <button class="remove-btn remove-feature" type="button">×</button>
-      </div>`).join("");
+    box.innerHTML=items.map((x,i)=>`<div class="feature-row"><span class="row-drag">☰</span><input class="feature-icon" value="${esc(x.icon)}"><input class="feat-title" value="${esc(x.title)}" placeholder="Titlu element"><label class="switch-line"><input type="checkbox" class="feat-check" ${x.enabled!==false?"checked":""}><span class="switch"></span></label><button class="remove-btn remove-feature" type="button">×</button></div>`).join("");
     box.querySelectorAll(".feature-row").forEach((row,i)=>{
       row.querySelector(".feature-icon").oninput=e=>cfg.features.items[i].icon=e.target.value;
       row.querySelector(".feat-title").oninput=e=>cfg.features.items[i].title=e.target.value;
@@ -198,20 +122,10 @@
       row.querySelector(".remove-feature").onclick=()=>{cfg.features.items.splice(i,1);renderFeatures()};
     });
   }
-
   function renderFood(){
     const box=$("foodList");if(!box)return;
     const products=Array.isArray(cfg.food.products)?cfg.food.products:[];
-    box.innerHTML=products.map((x,i)=>`
-      <div class="food-row">
-        <span class="row-drag">☰</span>
-        <input class="food-icon" value="${esc(x.icon)}" title="Icon">
-        <input class="food-name" value="${esc(x.name)}" placeholder="Produs">
-        <input class="food-required" type="number" min="0" step="0.1" value="${esc(x.required)}" placeholder="Necesar">
-        <input class="food-unit" value="${esc(x.unit)}" placeholder="Unitate">
-        <label class="switch-line food-active"><input type="checkbox" class="food-check" ${x.enabled!==false?"checked":""}><span class="switch"></span></label>
-        <button class="remove-btn remove-food" type="button">×</button>
-      </div>`).join("");
+    box.innerHTML=products.map((x,i)=>`<div class="food-row"><span class="row-drag">☰</span><input class="food-icon" value="${esc(x.icon)}" title="Icon"><input class="food-name" value="${esc(x.name)}" placeholder="Produs"><input class="food-required" type="number" min="0" step="0.1" value="${esc(x.required)}" placeholder="Necesar"><input class="food-unit" value="${esc(x.unit)}" placeholder="Unitate"><label class="switch-line food-active"><input type="checkbox" class="food-check" ${x.enabled!==false?"checked":""}><span class="switch"></span></label><button class="remove-btn remove-food" type="button">×</button></div>`).join("");
     box.querySelectorAll(".food-row").forEach((row,i)=>{
       row.querySelector(".food-icon").oninput=e=>cfg.food.products[i].icon=e.target.value;
       row.querySelector(".food-name").oninput=e=>cfg.food.products[i].name=e.target.value;
@@ -221,31 +135,19 @@
       row.querySelector(".remove-food").onclick=()=>{cfg.food.products.splice(i,1);renderFood()};
     });
   }
-
   function renderStats(){
     const box=$("statsList");if(!box)return;
     const cards=Array.isArray(cfg.stats.cards)?cfg.stats.cards:[];
-    box.innerHTML=cards.map((x,i)=>`
-      <div class="stat-row">
-        <span class="row-drag">☰</span>
-        <input class="stat-label" value="${esc(x.label)}">
-        <label class="switch-line"><input type="checkbox" class="stat-check" ${x.enabled!==false?"checked":""}><span class="switch"></span><span>Activ</span></label>
-      </div>`).join("");
+    box.innerHTML=cards.map((x,i)=>`<div class="stat-row"><span class="row-drag">☰</span><input class="stat-label" value="${esc(x.label)}"><label class="switch-line"><input type="checkbox" class="stat-check" ${x.enabled!==false?"checked":""}><span class="switch"></span><span>Activ</span></label></div>`).join("");
     box.querySelectorAll(".stat-row").forEach((row,i)=>{
       row.querySelector(".stat-label").oninput=e=>cfg.stats.cards[i].label=e.target.value;
       row.querySelector(".stat-check").onchange=e=>cfg.stats.cards[i].enabled=e.target.checked;
     });
   }
-
   function updateParticipationHint(){
     const e=$("participationVisibility"),note=$("participationVisibilityNote");if(!e||!note)return;
-    note.textContent=e.value==="untilEvent"
-      ?"Formularul și intrarea din Header sunt vizibile până la data și ora evenimentului. După începere, dispar automat."
-      :e.value==="manual"
-        ?"Vizibilitatea este controlată de statusul modulului și de setarea de mai jos."
-        :"Formularul rămâne ascuns până când este activat manual.";
+    note.textContent=e.value==="untilEvent"?"Formularul și intrarea din Header sunt vizibile până la data și ora evenimentului. După începere, dispar automat.":e.value==="manual"?"Vizibilitatea este controlată de statusul modulului și de setarea de mai jos.":"Formularul rămâne ascuns până când este activat manual.";
   }
-
   function renderEditor(){
     ensureConfigShape();
     const e=cfg.event||{};
@@ -266,17 +168,13 @@
     if($("activeUntil"))$("activeUntil").disabled=!isActive;
     const preview=$("heroImagePreview"),placeholder=$("heroImagePlaceholder");
     if(preview&&placeholder){
-      if(e.heroImage){preview.src=e.heroImage;preview.style.display="block";placeholder.style.display="none"}
-      else {preview.style.display="none";placeholder.style.display="grid"}
+      if(e.heroImage){preview.src=e.heroImage;preview.style.display="block";placeholder.style.display="none"}else{preview.style.display="none";placeholder.style.display="grid"}
       preview.onerror=()=>{preview.style.display="none";placeholder.style.display="grid"};
     }
     syncPanelOrder();syncPanelHeaders();renderGallery();renderFeatures();renderFood();renderStats();updateParticipationHint();bindAccordion();bindSortable();
   }
-
   function collect(){
-    ensureConfigShape();syncOrderFromDOM();
-    cfg.event=cfg.event||{};
-    const e=cfg.event;
+    ensureConfigShape();syncOrderFromDOM();cfg.event=cfg.event||{};const e=cfg.event;
     e.eventId=currentEvent?.id||e.eventId||"";
     e.name=$("eventName")?.value||"";e.congregation=$("congregation")?.value||"";e.date=$("eventDate")?.value||"";e.time=$("eventTime")?.value||"";e.location=$("eventLocation")?.value||"";
     e.heroTitle=$("heroTitle")?.value||"";e.heroSubtitle=$("heroSubtitle")?.value||"";e.heroVerse=$("heroVerse")?.value||"";e.heroImage=$("heroImage")?.value||"";e.footer=$("footerText")?.value||"";
@@ -289,14 +187,9 @@
     cfg.participation.fields={name:$("fieldName")?.checked||false,participation:$("fieldParticipation")?.checked||false,persons:$("fieldPersons")?.checked||false,products:$("fieldProducts")?.checked||false,notes:$("fieldNotes")?.checked||false};
     cfg.stats=cfg.stats||{};cfg.stats.title=$("statsTitle")?.value||"";cfg.stats.afterStart=$("statsAfterStart")?.value||"hide";
     cfg.food=cfg.food||{};cfg.food.title=$("foodTitle")?.value||"";cfg.food.description=$("foodDescription")?.value||"";cfg.food.hideCompleted=$("foodHideCompleted")?.checked||false;cfg.food.autoDisableHoursAfterStart=24;
-    document.querySelectorAll(".module-label-input").forEach(input=>{
-      const id=input.dataset.labelFor;
-      const m=getModule(id);
-      if(m)m.label=input.value.trim()||META[id][1];
-    });
+    document.querySelectorAll(".module-label-input").forEach(input=>{const id=input.dataset.labelFor;const m=getModule(id);if(m)m.label=input.value.trim()||META[id][1]});
     syncLegacyEnabled();
   }
-
   function renderEvents(){
     const selector=$("eventSelector"),list=$("eventsList");
     if(selector){
@@ -305,10 +198,13 @@
     }
     if(list){
       list.innerHTML=events.map(e=>{
-        const d=e.date?new Date(e.date+"T"+(e.time||"00:00")):null;
+        const dateValue=e.date||e.config?.event?.date||"";
+        const timeValue=e.time||e.config?.event?.time||"00:00";
+        const locationValue=e.location||e.config?.event?.location||"";
+        const d=dateValue?new Date(dateValue+"T"+timeValue):null;
         const date=d&&!isNaN(d)?new Intl.DateTimeFormat("ro-RO",{day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit"}).format(d):"Dată nespecificată";
         const del=e.status!=="ACTIV",act=e.status==="PLANIFICAT",arch=e.status==="ACTIV";
-        return "<div class=\"event-manager-row "+(currentEvent?.id===e.id?"is-selected":"")+"\"><div class=\"event-manager-main\"><div class=\"event-manager-title\"><strong>"+esc(e.name||"Eveniment fără nume")+"</strong></div><div class=\"event-manager-meta\"><span>📅 "+esc(date)+"</span>"+(e.location?"<span>📍 "+esc(e.location)+"</span>":"")+"</div></div><span class=\"event-row-status "+esc(e.status)+"\">"+esc(e.status)+"</span><div class=\"event-manager-actions\"><button type=\"button\" data-open=\""+esc(e.id)+"\">👁 Vezi</button>"+(act?"<button type=\"button\" class=\"row-activate\" data-activate=\""+esc(e.id)+"\">🟢 Activează</button>":"")+(del?"<button type=\"button\" class=\"row-delete\" data-delete=\""+esc(e.id)+"\">🗑 Șterge</button>":"")+"</div></div>";
+        return "<div class=\"event-manager-row "+(currentEvent?.id===e.id?"is-selected":"")+"\"><div class=\"event-manager-main\"><div class=\"event-manager-title\"><strong>"+esc(e.name||"Eveniment fără nume")+"</strong></div><div class=\"event-manager-meta\"><span>📅 "+esc(date)+"</span>"+(locationValue?"<span>📍 "+esc(locationValue)+"</span>":"")+"</div></div><span class=\"event-row-status "+esc(e.status)+"\">"+esc(e.status)+"</span><div class=\"event-manager-actions\"><button type=\"button\" data-open=\""+esc(e.id)+"\">👁 Vezi</button>"+(act?"<button type=\"button\" class=\"row-activate\" data-activate=\""+esc(e.id)+"\">🟢 Activează</button>":"")+(del?"<button type=\"button\" class=\"row-delete\" data-delete=\""+esc(e.id)+"\">🗑 Șterge</button>":"")+"</div></div>";
       }).join("");
       list.querySelectorAll("[data-open]").forEach(b=>b.onclick=()=>previewEvent(b.dataset.open));
       list.querySelectorAll("[data-activate]").forEach(b=>b.onclick=()=>activate(b.dataset.activate));
@@ -321,7 +217,6 @@
     if(d)d.disabled=!currentEvent||currentEvent.status==="ACTIV";
     if(p)p.disabled=!currentEvent;
   }
-
   function normalizeEventClient(ev){
     if(!ev)return ev;
     ev=JSON.parse(JSON.stringify(ev));
@@ -330,120 +225,71 @@
     if(ev.status!=="ACTIV"){ev.activeFrom="";ev.activeUntil=""}
     return ev;
   }
-
   async function selectEvent(id){
     const token=++selectionToken;
     const ev=normalizeEventClient(await fetchEvent(id));
     if(token!==selectionToken)return;
     currentEvent=ev;cfg=normalizeConfig(ev.config||{});ensureConfigShape();renderEditor();renderEvents();
   }
-
   async function previewEvent(id=currentEvent?.id){
     if(!id)return;
-    try{
-      await selectEvent(id);
-      window.open("index.html?previewEvent="+encodeURIComponent(id),"_blank","noopener");
-    }catch(e){alert(e.message||"Nu s-a putut deschide previzualizarea.");}
+    try{await selectEvent(id);window.open("index.html?previewEvent="+encodeURIComponent(id),"_blank","noopener")}catch(e){alert(e.message||"Nu s-a putut deschide previzualizarea.")}
   }
-
   async function refresh(){
     const requestedToken=++selectionToken;
     const loaded=(await fetchEvents()).map(normalizeEventClient);
     if(requestedToken!==selectionToken)return;
     events=loaded;
-    // Randăm lista imediat. Dacă încărcarea configurației unui eveniment are o problemă,
-    // lista nu trebuie să dispară și adminul trebuie să rămână utilizabil.
-    currentEvent = currentEvent && events.some(e=>e.id===currentEvent.id)
-      ? events.find(e=>e.id===currentEvent.id)
-      : (events.find(e=>e.status==="ACTIV") || events[0] || null);
+    currentEvent=currentEvent&&events.some(e=>e.id===currentEvent.id)?events.find(e=>e.id===currentEvent.id):(events.find(e=>e.status==="ACTIV")||events[0]||null);
     renderEvents();
     if(!events.length){currentEvent=null;renderEvents();return}
     const id=currentEvent.id;
-    try{
-      await selectEvent(id);
-    }catch(error){
+    try{await selectEvent(id)}catch(error){
       console.error("Eroare la încărcarea configurației evenimentului:",error);
-      currentEvent=events.find(e=>e.id===id)||currentEvent;
-      cfg=normalizeConfig(currentEvent?.config||{});
-      renderEditor();
-      renderEvents();
-      const state=$("saveState");
-      if(state) state.textContent="Evenimentele au fost încărcate, dar configurația nu a putut fi deschisă.";
+      currentEvent=events.find(e=>e.id===id)||currentEvent;cfg=normalizeConfig(currentEvent?.config||{});renderEditor();renderEvents();
+      const state=$("saveState");if(state)state.textContent="Evenimentele au fost încărcate, dar configurația nu a putut fi deschisă.";
     }
   }
-
   async function save(){
     if(!currentEvent?.id)return;
     const desiredStatus=$("eventStatus")?.value||currentEvent.status||"PLANIFICAT";
     collect();
-    const b=$("saveBtn"),s=$("saveState");
-    if(b)b.disabled=true;
-    if(s)s.textContent="Se salvează pentru „"+(cfg.event?.name||"eveniment")+"”…";
+    const b=$("saveBtn"),s=$("saveState");if(b)b.disabled=true;if(s)s.textContent="Se salvează pentru „"+(cfg.event?.name||"eveniment")+"”…";
     try{
       if(desiredStatus==="ACTIV"){
-        const from=$("activeFrom")?.value||"";
-        const until=$("activeUntil")?.value||"";
+        const from=$("activeFrom")?.value||"",until=$("activeUntil")?.value||"";
         if(!from){alert("Pentru statusul ACTIV trebuie completat „Activ din”.");return}
         if(until&&new Date(until)<=new Date(from)){alert("„Activ până la” trebuie să fie după „Activ din”.");return}
         const savedCfg=await saveEventCentral({...currentEvent,status:currentEvent.status,config:cfg,activeFrom:currentEvent.activeFrom||"",activeUntil:currentEvent.activeUntil||""},user.id);
-        currentEvent=await activateEventCentral(currentEvent.id,isoValue(from),isoValue(until),user.id);
-        cfg=normalizeConfig(currentEvent.config||savedCfg.config||cfg);
+        currentEvent=await activateEventCentral(currentEvent.id,isoValue(from),isoValue(until),user.id);cfg=normalizeConfig(currentEvent.config||savedCfg.config||cfg);
       }else{
         currentEvent.status=desiredStatus;currentEvent.activeFrom="";currentEvent.activeUntil="";
-        const saved=await saveEventCentral({...currentEvent,config:cfg,status:desiredStatus,activeFrom:"",activeUntil:""},user.id);
-        currentEvent=saved;cfg=normalizeConfig(saved.config||cfg);
+        const saved=await saveEventCentral({...currentEvent,config:cfg,status:desiredStatus,activeFrom:"",activeUntil:""},user.id);currentEvent=saved;cfg=normalizeConfig(saved.config||cfg);
       }
-      await refresh();
-      if(s){s.textContent="✓ Salvat pentru evenimentul selectat";s.classList.add("saved");setTimeout(()=>s.classList.remove("saved"),2500)}
-    }catch(e){alert(e.message||"Nu s-a putut salva evenimentul.")}
-    finally{if(b)b.disabled=false}
+      await refresh();if(s){s.textContent="✓ Salvat pentru evenimentul selectat";s.classList.add("saved");setTimeout(()=>s.classList.remove("saved"),2500)}
+    }catch(e){alert(e.message||"Nu s-a putut salva evenimentul.")}finally{if(b)b.disabled=false}
   }
-
-  async function create(){
-    if(!currentEvent)return;
-    collect();
-    await saveEventCentral({...currentEvent,config:cfg},user.id);
-    const ev=normalizeEventClient(await createEventCentral(currentEvent.id,user.id));
-    await refresh();
-    await selectEvent(ev.id);
-  }
-
+  async function create(){if(!currentEvent)return;collect();await saveEventCentral({...currentEvent,config:cfg},user.id);const ev=normalizeEventClient(await createEventCentral(currentEvent.id,user.id));await refresh();await selectEvent(ev.id)}
   async function activate(id=currentEvent?.id){
-    if(!id)return;
-    const ev=events.find(x=>x.id===id)||currentEvent;
+    if(!id)return;const ev=events.find(x=>x.id===id)||currentEvent;
     const from=id===currentEvent?.id?($("activeFrom")?.value||""):localValue(ev.activeFrom);
     const until=id===currentEvent?.id?($("activeUntil")?.value||""):localValue(ev.activeUntil);
     if(!from){alert("Completează „Activ din”.");return}
     if(until&&new Date(until)<=new Date(from)){alert("„Activ până la” trebuie să fie după „Activ din”.");return}
-    await activateEventCentral(id,isoValue(from),isoValue(until),user.id);
-    await refresh();
+    await activateEventCentral(id,isoValue(from),isoValue(until),user.id);await refresh();
   }
-
   async function archiveEvent(id=currentEvent?.id){
-    if(!id)return;
-    const ev=events.find(x=>x.id===id)||currentEvent;
-    if(!ev||ev.status!=="ACTIV")return;
+    if(!id)return;const ev=events.find(x=>x.id===id)||currentEvent;if(!ev||ev.status!=="ACTIV")return;
     if(!confirm("Arhivezi „"+ev.name+"”?"))return;
-    await archiveEventCentral(id,user.id);
-    await refresh();
+    await archiveEventCentral(id,user.id);await refresh();
   }
-
   async function deleteEvent(id=currentEvent?.id){
-    const ev=events.find(x=>x.id===id);
-    if(!ev||ev.status==="ACTIV")return;
+    const ev=events.find(x=>x.id===id);if(!ev||ev.status==="ACTIV")return;
     if(!confirm("Ștergi definitiv „"+ev.name+"” și toate datele lui?"))return;
-    await deleteEventCentral(id,user.id);
-    currentEvent=null;
-    await refresh();
+    await deleteEventCentral(id,user.id);currentEvent=null;await refresh();
   }
-
   $("eventSelector")?.addEventListener("change",e=>{const id=e.target.value;if(id)selectEvent(id).catch(x=>alert(x.message))});
-  $("eventStatus")?.addEventListener("change",e=>{
-    const active=e.target.value==="ACTIV";
-    if($("activeFrom"))$("activeFrom").disabled=!active;
-    if($("activeUntil"))$("activeUntil").disabled=!active;
-    if(!active){$("activeFrom").value="";$("activeUntil").value=""}
-  });
+  $("eventStatus")?.addEventListener("change",e=>{const active=e.target.value==="ACTIV";if($("activeFrom"))$("activeFrom").disabled=!active;if($("activeUntil"))$("activeUntil").disabled=!active;if(!active){$("activeFrom").value="";$("activeUntil").value=""}});
   $("participationVisibility")?.addEventListener("change",updateParticipationHint);
   $("saveBtn")?.addEventListener("click",()=>save().catch(x=>alert(x.message)));
   $("createEventBtn")?.addEventListener("click",()=>create().catch(x=>alert(x.message)));
@@ -451,31 +297,12 @@
   $("archiveEventBtn")?.addEventListener("click",()=>archiveEvent().catch(x=>alert(x.message)));
   $("previewEventBtn")?.addEventListener("click",()=>previewEvent().catch(x=>alert(x.message)));
   $("logoutAdmin")?.addEventListener("click",()=>{localStorage.removeItem("destindereUser");location.replace("login.html")});
-
   $("addImage")?.addEventListener("click",()=>{cfg.gallery=cfg.gallery||{};cfg.gallery.images=Array.isArray(cfg.gallery.images)?cfg.gallery.images:[];cfg.gallery.images.push({src:"",title:"Amintiri",alt:"Amintire"});renderGallery()});
   $("addFeature")?.addEventListener("click",()=>{cfg.features=cfg.features||{};cfg.features.items=Array.isArray(cfg.features.items)?cfg.features.items:[];cfg.features.items.push({icon:"✨",title:"Element nou",enabled:true});renderFeatures()});
   $("addFood")?.addEventListener("click",()=>{cfg.food=cfg.food||{};cfg.food.products=Array.isArray(cfg.food.products)?cfg.food.products:[];cfg.food.products.push({id:"food_"+Date.now(),name:"Produs nou",required:1,unit:"bucăți",icon:"🎁",enabled:true});renderFood()});
-
-  $("exportBtn")?.addEventListener("click",()=>{collect();const blob=new Blob([JSON.stringify(cfg,null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="destindere-config-"+(currentEvent?.id||"event")+ ".json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)});
+  $("exportBtn")?.addEventListener("click",()=>{collect();const blob=new Blob([JSON.stringify(cfg,null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="destindere-config-"+(currentEvent?.id||"event")+".json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)});
   $("importBtn")?.addEventListener("click",()=>$("importFile")?.click());
-  $("importFile")?.addEventListener("change",e=>{
-    const f=e.target.files?.[0];if(!f)return;
-    const r=new FileReader();
-    r.onload=()=>{try{cfg=deepMerge(normalizeConfig({}),JSON.parse(r.result));ensureConfigShape();renderEditor()}catch(err){alert("Fișier de configurare invalid.")}};
-    r.readAsText(f);
-  });
-
-  $("resetBtn")?.addEventListener("click",()=>{
-    if(!confirm("Revii la configurația implicită a editorului?"))return;
-    cfg=normalizeConfig({});
-    ensureConfigShape();
-    renderEditor();
-  });
-
-  refresh().catch(e=>{
-    console.error(e);
-    alert(e?.message==="Failed to fetch"
-      ?"Nu se poate contacta Google Apps Script. Verifică deployment-ul Web App și URL-ul din config.js."
-      :(e?.message||"Nu s-au putut încărca evenimentele."));
-  });
+  $("importFile")?.addEventListener("change",e=>{const f=e.target.files?.[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{cfg=deepMerge(normalizeConfig({}),JSON.parse(r.result));ensureConfigShape();renderEditor()}catch(err){alert("Fișier de configurare invalid.")}};r.readAsText(f)});
+  $("resetBtn")?.addEventListener("click",()=>{if(!confirm("Revii la configurația implicită a editorului?"))return;cfg=normalizeConfig({});ensureConfigShape();renderEditor()});
+  refresh().catch(e=>{console.error(e);alert(e?.message==="Failed to fetch"?"Nu se poate contacta Google Apps Script. Verifică deployment-ul Web App și URL-ul din config.js.":(e?.message||"Nu s-au putut încărca evenimentele."))});
 })();

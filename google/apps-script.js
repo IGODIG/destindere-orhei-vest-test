@@ -926,6 +926,8 @@ function eventRecordFromRow(row) {
   }
   var rawLocation = row[5] || eventConfig.location || "";
   var rawName = row[1] || eventConfig.name || "";
+  var theme = String(eventConfig.theme || "auto").trim().toLowerCase();
+  if (["auto","spring","summer","autumn","winter"].indexOf(theme) === -1) theme = "auto";
   var rawCongregation = row[2] || eventConfig.congregation || "";
 
   var activeFrom = row[7] ? new Date(row[7]) : null;
@@ -952,6 +954,7 @@ function eventRecordFromRow(row) {
     date: formattedDate,
     time: formattedTime,
     location: String(rawLocation),
+    theme: theme,
     status: eventEffectiveStatus(row[6], activeFrom, activeUntil),
     storedStatus: String(row[6] || "PLANIFICAT").toUpperCase(),
     activeFrom: activeFrom && !isNaN(activeFrom.getTime()) ? activeFrom.toISOString() : "",
@@ -1028,6 +1031,7 @@ function getEventsResponse(ss) {
       date: e.date || eventConfig.date || "",
       time: e.time || eventConfig.time || "",
       location: e.location || eventConfig.location || "",
+      theme: e.theme || eventConfig.theme || "auto",
       status: e.status,
       storedStatus: e.storedStatus,
       activeFrom: e.activeFrom,
@@ -1073,6 +1077,11 @@ function parseEventDateTime(value, fallback) {
   return isNaN(d.getTime()) ? (fallback || new Date()) : d;
 }
 
+function normalizeEventTheme(value) {
+  var theme = String(value || "").trim().toLowerCase();
+  return ["auto","spring","summer","autumn","winter"].indexOf(theme) !== -1 ? theme : "auto";
+}
+
 function authorizeEventAdmin(ss, data) {
   var userId = cleanValue(getValue(data, ["updatedBy", "userId"]));
   if (!isActiveAdmin(ss, userId)) throw new Error("Utilizatorul nu este autorizat pentru administrarea evenimentelor.");
@@ -1110,6 +1119,7 @@ function createEvent(ss, data) {
     var activeUntil = activeUntilRaw ? parseEventDateTime(activeUntilRaw, null) : "";
     config.event = config.event || {};
     config.event.name = name; config.event.congregation = congregation; config.event.date = date; config.event.time = time; config.event.location = location;
+    config.event.theme = normalizeEventTheme(config.event.theme);
     config.event.eventId = id;
     var now = new Date();
     // Un eveniment nou este întotdeauna PLANIFICAT.
@@ -1159,6 +1169,7 @@ function saveEvent(ss, data) {
     }
     config.event = config.event || {};
     config.event.eventId = eventId; config.event.name=name; config.event.congregation=congregation; config.event.date=date; config.event.time=time; config.event.location=location;
+    config.event.theme = normalizeEventTheme(config.event.theme);
 
     // Invarianta sistemului: există cel mult un singur eveniment ACTIV.
     // Dacă salvarea setează direct un eveniment ca ACTIV, toate celelalte ACTIV devin ARHIVAT.

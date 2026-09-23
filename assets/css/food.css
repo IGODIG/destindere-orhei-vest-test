@@ -472,3 +472,11 @@
   #foodProgress .food-card-bottom strong { font-size: .78rem; }
   #foodProgress .food-progress { height: 10px; }
 }
+
+/* Theme integration */
+body.theme-spring .food,body.theme-summer .food,body.theme-autumn .food,body.theme-winter .food{background:linear-gradient(135deg,var(--surface),var(--section-bg))}
+body.theme-spring #foodProgress .food-card,body.theme-summer #foodProgress .food-card,body.theme-autumn #foodProgress .food-card,body.theme-winter #foodProgress .food-card{border-color:color-mix(in srgb,var(--primary) 14%,transparent)}
+body.theme-spring #foodProgress .food-card-icon,body.theme-summer #foodProgress .food-card-icon,body.theme-autumn #foodProgress .food-card-icon,body.theme-winter #foodProgress .food-card-icon{background:linear-gradient(145deg,color-mix(in srgb,var(--primary) 8%,white),color-mix(in srgb,var(--accent) 25%,white))}
+body.theme-spring #foodProgress .food-card-content h3,body.theme-summer #foodProgress .food-card-content h3,body.theme-autumn #foodProgress .food-card-content h3,body.theme-winter #foodProgress .food-card-content h3{color:var(--secondary)}
+body.theme-spring #foodProgress .food-card-bottom strong,body.theme-summer #foodProgress .food-card-bottom strong,body.theme-autumn #foodProgress .food-card-bottom strong,body.theme-winter #foodProgress .food-card-bottom strong{color:var(--primary)}
+body.theme-spring #foodProgress .food-progress-bar,body.theme-summer #foodProgress .food-progress-bar,body.theme-autumn #foodProgress .food-progress-bar,body.theme-winter #foodProgress .food-progress-bar{background:linear-gradient(90deg,var(--primary),var(--accent),var(--gold))}

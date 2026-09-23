@@ -51,16 +51,33 @@ const hero= '<section class="hero" id="home"'+heroStyle+'><div class="container"
     nav.innerHTML='<li><a href="#home">Acasă</a></li>'+mods.filter(m=>m.showInMenu!==false&&m.id!=="countdown").map(m=>'<li><a href="#'+(m.id==="features"?"event":(m.id==="participation"?"register":m.id))+'">'+esc(m.id==="features"?(started?cfg.features.menuAfter:cfg.features.menuBefore):(m.id==="food"?cfg.food.title:(m.id==="participation"?"Confirmă participarea":m.label)))+"</a></li>").join("");
     document.title=(cfg.event?.name||"Destindere")+" • "+(cfg.event?.congregation||"");
     document.getElementById("footerText").textContent=cfg.event?.footer||"";
-    applySeasonTheme(cfg);
-    document.getElementById("navLogo").textContent=(document.body.classList.contains("season-spring")?"🌸 ":"🍂 ")+String(cfg.event?.congregation||"Orhei-Vest").replace("Congregația ","");
+    applyTheme(cfg);
+    const theme=applyTheme(cfg);
+    document.getElementById("navLogo").textContent=(THEME_META[theme]?.icon||"🌸")+" "+String(cfg.event?.congregation||"Orhei-Vest").replace("Congregația ","");
     startCountdownIfNeeded(cfg);
   }
 
-  function applySeasonTheme(cfg){
-    const name=String(cfg.event?.name||"").toUpperCase();
-    const isSpring=name.includes("PRIMAVAR") || name.includes("PRIMĂVAR");
-    document.body.classList.toggle("season-spring",isSpring);
-    document.body.classList.toggle("season-autumn",!isSpring);
+  const THEME_META = {
+    spring: { icon: "🌸", particles: ["🌸","🌼","🌸","🌷","🍃","🍃","🌿"] },
+    summer: { icon: "☀️", particles: ["☀️","✨","·","✦","☀️","·","✨","✦"] },
+    autumn: { icon: "🍂", particles: ["🍂","🍁","🍂","🍃","🍁","🍂","🍃"] },
+    winter: { icon: "❄️", particles: ["❄️","❅","❄️","✦","❄️","❅","✧","❄️","✦","❅"] }
+  };
+
+  function renderThemeParticles(theme){
+    const root=document.getElementById("themeParticles");
+    if(!root)return;
+    const meta=THEME_META[theme]||THEME_META.spring;
+    root.className="theme-particles theme-particles-"+theme;
+    root.innerHTML=meta.particles.map((p,i)=>'<span style="--i:'+i+'">'+esc(p)+"</span>").join("");
+  }
+
+  function applyTheme(cfg){
+    const theme=resolveTheme(cfg);
+    document.body.classList.remove("theme-spring","theme-summer","theme-autumn","theme-winter");
+    document.body.classList.add("theme-"+theme);
+    renderThemeParticles(theme);
+    return theme;
   }
 
   function startCountdownIfNeeded(cfg){
@@ -135,8 +152,8 @@ const hero= '<section class="hero" id="home"'+heroStyle+'><div class="container"
             });
             document.title=eventName+" • "+congregation;
             document.getElementById("footerText").textContent=window.CONFIG.event.footer||"";
-            applySeasonTheme(window.CONFIG);
-            document.getElementById("navLogo").textContent="🌸 "+String(congregation).replace("Congregația ","");
+            const theme=applyTheme(window.CONFIG);
+            document.getElementById("navLogo").textContent=(THEME_META[theme]?.icon||"🌸")+" "+String(congregation).replace("Congregația ","");
             nav.innerHTML='<li><a href="#home">Acasă</a></li>';
             app.innerHTML='<section class="hero planned-event" id="home"'+heroStyle+'><div class="container"><p class="hero-bible-ref">URMĂTORUL EVENIMENT</p><h2>'+esc(eventName)+'</h2><h2>În curând</h2><p class="planned-event-date">📅 '+esc(date)+(time?' &nbsp; 🕐 '+esc(time):"")+'</p>'+(location?'<p class="planned-event-location">📍 '+esc(location)+'</p>':"")+'<p class="planned-event-message">Evenimentul va fi disponibil în curând.</p></div></section>';
             return;

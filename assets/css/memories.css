@@ -249,3 +249,9 @@
     padding: 9px 10px;
   }
 }
+
+/* Theme integration */
+body.theme-spring .memories,body.theme-summer .memories,body.theme-autumn .memories,body.theme-winter .memories{background:linear-gradient(135deg,var(--surface),var(--section-bg))}
+body.theme-spring .upload-icon,body.theme-summer .upload-icon,body.theme-autumn .upload-icon,body.theme-winter .upload-icon{background:linear-gradient(145deg,color-mix(in srgb,var(--primary) 8%,white),color-mix(in srgb,var(--accent) 25%,white))}
+body.theme-spring .upload-card h3,body.theme-summer .upload-card h3,body.theme-autumn .upload-card h3,body.theme-winter .upload-card h3{color:var(--secondary)}
+body.theme-spring .upload-button,body.theme-summer .upload-button,body.theme-autumn .upload-button,body.theme-winter .upload-button{background:color-mix(in srgb,var(--primary) 9%,white);color:var(--primary);border-color:color-mix(in srgb,var(--primary) 18%,transparent)}

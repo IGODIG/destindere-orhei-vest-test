@@ -138,7 +138,7 @@ const hero= '<section class="hero" id="home"'+heroStyle+'><div class="container"
             applySeasonTheme(window.CONFIG);
             document.getElementById("navLogo").textContent="🌸 "+String(congregation).replace("Congregația ","");
             nav.innerHTML='<li><a href="#home">Acasă</a></li>';
-            app.innerHTML='<section class="hero planned-event" id="home"'+heroStyle+'><div class="container"><p class="hero-bible-ref">URMĂTORUL EVENIMENT</p><h2>'+esc(eventName)+'</h2><h1>În curând</h1><p class="planned-event-date">📅 '+esc(date)+(time?' &nbsp; 🕐 '+esc(time):"")+'</p>'+(location?'<p class="planned-event-location">📍 '+esc(location)+'</p>':"")+'<p class="planned-event-message">Evenimentul va fi disponibil în curând.</p></div></section>';
+            app.innerHTML='<section class="hero planned-event" id="home"'+heroStyle+'><div class="container"><p class="hero-bible-ref">URMĂTORUL EVENIMENT</p><h2>'+esc(eventName)+'</h2><h2>În curând</h2><p class="planned-event-date">📅 '+esc(date)+(time?' &nbsp; 🕐 '+esc(time):"")+'</p>'+(location?'<p class="planned-event-location">📍 '+esc(location)+'</p>':"")+'<p class="planned-event-message">Evenimentul va fi disponibil în curând.</p></div></section>';
             return;
           }
         }

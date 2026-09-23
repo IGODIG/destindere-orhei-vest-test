@@ -101,14 +101,6 @@ const hero= '<section class="hero" id="home"'+heroStyle+'><div class="container"
             return !Number.isNaN(t) && t>=Date.now();
           }) || planned[0];
           if(next){
-            const eventName=next.name||next.config?.event?.name||"Următorul eveniment";
-            const congregation=next.congregation||next.config?.event?.congregation||"Congregația Orhei-Vest";
-            const dateValue=next.date||next.config?.event?.date||"";
-            const date=formatDate(dateValue);
-            const rawTime=next.time||next.config?.event?.time||"";
-            const timeMatch=String(rawTime).match(/(?:^|\s)(\d{1,2}):(\d{2})(?::\d{2})?/);
-            const time=timeMatch ? String(timeMatch[1]).padStart(2,"0")+":"+timeMatch[2] : String(rawTime);
-            const location=next.location||next.config?.event?.location||"";
             let plannedConfig={};
             try {
               const plannedResponse=await apiGet({type:"event",eventId:next.id});
@@ -116,6 +108,14 @@ const hero= '<section class="hero" id="home"'+heroStyle+'><div class="container"
             } catch (plannedError) {
               console.warn("Nu s-a putut încărca configurația evenimentului planificat:",plannedError);
             }
+            const eventName=plannedConfig.event?.name||next.name||next.config?.event?.name||"Următorul eveniment";
+            const congregation=plannedConfig.event?.congregation||next.congregation||next.config?.event?.congregation||"Congregația Orhei-Vest";
+            const dateValue=plannedConfig.event?.date||next.date||next.config?.event?.date||"";
+            const date=formatDate(dateValue);
+            const rawTime=plannedConfig.event?.time||"";
+            const timeMatch=String(rawTime).match(/(?:^|\s)(\d{1,2}):(\d{2})(?::\d{2})?/);
+            const time=timeMatch ? String(timeMatch[1]).padStart(2,"0")+":"+timeMatch[2] : String(rawTime);
+            const location=plannedConfig.event?.location||next.location||next.config?.event?.location||"";
             const heroImage=String(plannedConfig.event?.heroImage||"").trim();
             const heroStyle=heroImage
               ? ' style="background-image:linear-gradient(rgba(20,20,20,.42),rgba(20,20,20,.42)),url(\\''+attr(heroImage)+'\\')"'

@@ -133,8 +133,36 @@ document.addEventListener("DOMContentLoaded", function () {
   // ÎNCĂRCARE DATE
   // ==========================================
 
+  function populateProductSelects() {
+    const products = (CONFIG.food?.products || []).filter(function(product) {
+      return product && product.enabled !== false && product.id;
+    });
+
+    ["productId1", "productId2"].forEach(function(name) {
+      const select = document.querySelector('select[name="' + name + '"]');
+      if (!select) return;
+
+      const current = select.value;
+      select.innerHTML = '<option value="">Alege produsul...</option>';
+
+      products.forEach(function(product) {
+        const option = document.createElement("option");
+        option.value = product.id;
+        option.textContent = product.name + (product.unit ? " (" + product.unit + ")" : "");
+        select.appendChild(option);
+      });
+
+      if (current && products.some(function(product) { return product.id === current; })) {
+        select.value = current;
+      }
+    });
+  }
+
   function loadData() {
-    fetch(scriptURL)
+    const eventId = CONFIG.event?.eventId || "";
+    const url = new URL(scriptURL);
+    url.searchParams.set("eventId", eventId);
+    fetch(url.toString())
       .then(function (response) {
         if (!response.ok) {
           throw new Error("HTTP " + response.status);
@@ -145,6 +173,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       .then(function (data) {
         console.log("Date Google Sheets:", data);
+        populateProductSelects();
 
         // ==========================================
         // INVITAȚI
@@ -222,6 +251,10 @@ document.addEventListener("DOMContentLoaded", function () {
       // ==========================================
 
       const formData = new FormData(form);
+      const eventId = CONFIG.event?.eventId || "";
+      if (eventId) {
+        formData.append("eventId", eventId);
+      }
 
       // ==========================================
       // GOOGLE APPS SCRIPT

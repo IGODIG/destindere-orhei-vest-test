@@ -870,3 +870,39 @@ footer {
 .hero-participation-btn{display:inline-flex;align-items:center;justify-content:center;min-width:220px;text-decoration:none;font-weight:600}
 
 .profile-section{padding:50px 0}.profile-card{max-width:520px;margin:auto;text-align:center;background:rgba(255,255,255,.78);padding:28px;border-radius:22px;box-shadow:0 16px 40px rgba(0,0,0,.08)}.profile-card h2{color:var(--secondary);margin-bottom:6px}.profile-card p{color:var(--gray);margin-bottom:18px}.nav-user{white-space:nowrap}
+
+/* ==========================================================
+   FUNDAL PRIMĂVARĂ
+========================================================== */
+
+body.season-spring {
+  background: #f7f4f7;
+}
+
+body.season-spring .features {
+  background: linear-gradient(180deg, #f8f5f8 0%, #eef7f1 100%);
+}
+
+body.season-spring .register {
+  background: linear-gradient(180deg, #fffafd 0%, #f0f8f2 100%);
+}
+
+body.season-spring footer {
+  background: linear-gradient(135deg, #dff1e5 0%, #f7e8f1 100%);
+  color: #496052;
+}
+
+body.season-spring .countdown-card,
+body.season-spring .feature-card,
+body.season-spring .register form {
+  border-color: rgba(112, 170, 132, 0.18);
+}
+
+body.season-spring .section-title,
+body.season-spring .feature-card h3 {
+  color: #47775b;
+}
+
+body.season-spring .section-title::after {
+  background: linear-gradient(90deg, #75b889, #e6a9c4);
+}

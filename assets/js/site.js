@@ -77,13 +77,14 @@ const hero= '<section class="hero" id="home"'+heroStyle+'><div class="container"
     try{
       if(!eventId){
         const d=await apiGet({type:"events"});
-        const events=d.events||[];
-        const active=events.find(e=>e.status==="ACTIV");
+        const events=Array.isArray(d.events)?d.events:[];
+        const statusOf=e=>String(e?.status||e?.storedStatus||"").trim().toUpperCase();
+        const active=events.find(e=>statusOf(e)==="ACTIV");
         if(active){
           eventId=active.id;
         }else{
           const planned=events
-            .filter(e=>e.status==="PLANIFICAT")
+            .filter(e=>statusOf(e)==="PLANIFICAT")
             .sort((a,b)=>{
               const aDate=a.date||a.config?.event?.date||"";
               const bDate=b.date||b.config?.event?.date||"";

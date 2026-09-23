@@ -236,7 +236,27 @@
     if(!ev)return ev;
     ev=JSON.parse(JSON.stringify(ev));
     ev.status=String(ev.status||"PLANIFICAT").toUpperCase();
-    if(ev.config){ev.config=normalizeConfig(ev.config);ev.config.event=ev.config.event||{};const raw=String(ev.config.event.time||"");const m=raw.match(/(\d{1,2}):(\d{2})/);if(m)ev.config.event.time=pad(m[1])+":"+m[2]}
+
+    // Apps Script poate returna o valoare de tip Date pentru ora,
+    // de exemplu "Sun Dec 31 1899 08:50:00 GMT+0155 (...)". Pentru
+    // lista de evenimente avem nevoie strict de HH:mm.
+    function normalizeTime(value){
+      const raw=String(value||"").trim();
+      if(!raw)return "";
+      const match=raw.match(/(?:^|\s)(\d{1,2}):(\d{2})(?::\d{2})?/);
+      if(match)return pad(match[1])+":"+match[2];
+      return raw;
+    }
+
+    ev.time=normalizeTime(ev.time);
+
+    if(ev.config){
+      ev.config=normalizeConfig(ev.config);
+      ev.config.event=ev.config.event||{};
+      ev.config.event.time=normalizeTime(ev.config.event.time);
+      if(!ev.time && ev.config.event.time) ev.time=ev.config.event.time;
+    }
+
     if(ev.status!=="ACTIV"){ev.activeFrom="";ev.activeUntil=""}
     return ev;
   }

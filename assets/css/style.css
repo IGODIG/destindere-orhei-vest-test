@@ -918,12 +918,20 @@ body.season-spring .register strong {
   color: #47775b;
 }
 
+body.season-spring .btn,
+body.season-spring button,
 body.season-spring .register button {
   background: linear-gradient(135deg, #65ad7d, #d99bb8);
+  color: #fff;
+  border-color: transparent;
   box-shadow: 0 12px 30px rgba(101, 173, 125, .22);
 }
 
+body.season-spring .btn:hover,
+body.season-spring button:hover,
 body.season-spring .register button:hover {
+  background: linear-gradient(135deg, #5da875, #cf8fae);
+  color: #fff;
   box-shadow: 0 18px 35px rgba(101, 173, 125, .30);
 }
 

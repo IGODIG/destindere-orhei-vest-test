@@ -84,7 +84,7 @@ function migrateLegacyEventData(ss, eventId) {
     }
 
     if (changed) range.setValues(values);
-  }
+  });
 }
 
 function eventRowMatches(row, eventId, eventColumnIndex) {

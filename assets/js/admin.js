@@ -162,7 +162,7 @@
   function renderEditor(){
     ensureConfigShape();
     const e=cfg.event||{};
-    set("eventName",e.name);set("congregation",e.congregation);set("eventDate",e.date);set("eventTime",e.time);set("eventLocation",e.location);
+    set("eventName",e.name);set("congregation",e.congregation);set("eventDate",e.date);set("eventTime",e.time);set("eventTheme",e.theme||"auto");set("eventLocation",e.location);
     set("heroTitle",e.heroTitle);set("heroSubtitle",e.heroSubtitle);set("heroVerse",e.heroVerse);set("heroImage",e.heroImage);set("footerText",e.footer);
     set("countdownTitle",cfg.countdown?.title);set("startedMessage",cfg.countdown?.startedMessage);
     set("galleryTitle",cfg.gallery?.title);check("driveEnabled",cfg.gallery?.driveEnabled);set("driveText",cfg.gallery?.driveText);set("driveUrl",cfg.gallery?.driveUrl);
@@ -191,7 +191,7 @@
   function collect(){
     ensureConfigShape();syncOrderFromDOM();cfg.event=cfg.event||{};const e=cfg.event;
     e.eventId=currentEvent?.id||e.eventId||"";
-    e.name=$("eventName")?.value||"";e.congregation=$("congregation")?.value||"";e.date=$("eventDate")?.value||"";e.time=$("eventTime")?.value||"";e.location=$("eventLocation")?.value||"";
+    e.name=$("eventName")?.value||"";e.congregation=$("congregation")?.value||"";e.date=$("eventDate")?.value||"";e.time=$("eventTime")?.value||"";e.theme=normalizeTheme($("eventTheme")?.value||"auto");e.location=$("eventLocation")?.value||"";
     e.heroTitle=$("heroTitle")?.value||"";e.heroSubtitle=$("heroSubtitle")?.value||"";e.heroVerse=$("heroVerse")?.value||"";e.heroImage=$("heroImage")?.value||"";e.footer=$("footerText")?.value||"";
     cfg.countdown=cfg.countdown||{};cfg.countdown.title=$("countdownTitle")?.value||"";cfg.countdown.startedMessage=$("startedMessage")?.value||"";
     cfg.gallery=cfg.gallery||{};cfg.gallery.title=$("galleryTitle")?.value||"";cfg.gallery.driveEnabled=$("driveEnabled")?.checked||false;cfg.gallery.driveText=$("driveText")?.value||"";cfg.gallery.driveUrl=$("driveUrl")?.value||"";
@@ -216,7 +216,7 @@
         // Lista centrală folosește metadata evenimentului ca sursă de adevăr
         // pentru dată, oră și locație. ConfigJSON rămâne pentru editor.
         const dateValue=e.date||"";
-        const rawTime=e.config?.event?.time||e.time||"";
+        const rawTime=e.time||e.config?.event?.time||"";
         const timeMatch=String(rawTime).match(/(?:^|\s)(\d{1,2}):(\d{2})(?::\d{2})?/);
         const timeValue=timeMatch
           ? String(timeMatch[1]).padStart(2,"0")+":"+timeMatch[2]

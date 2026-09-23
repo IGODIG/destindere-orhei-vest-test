@@ -307,15 +307,17 @@
       list.innerHTML=events.map(e=>{
         const d=e.date?new Date(e.date+"T"+(e.time||"00:00")):null;
         const date=d&&!isNaN(d)?new Intl.DateTimeFormat("ro-RO",{day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit"}).format(d):"Dată nespecificată";
-        const del=e.status!=="ACTIV",act=e.status==="PLANIFICAT";
+        const del=e.status!=="ACTIV",act=e.status==="PLANIFICAT",arch=e.status==="ACTIV";
         return "<div class=\"event-manager-row "+(currentEvent?.id===e.id?"is-selected":"")+"\"><div class=\"event-manager-main\"><div class=\"event-manager-title\"><strong>"+esc(e.name||"Eveniment fără nume")+"</strong></div><div class=\"event-manager-meta\"><span>📅 "+esc(date)+"</span>"+(e.location?"<span>📍 "+esc(e.location)+"</span>":"")+"</div></div><span class=\"event-row-status "+esc(e.status)+"\">"+esc(e.status)+"</span><div class=\"event-manager-actions\"><button type=\"button\" data-open=\""+esc(e.id)+"\">👁 Vezi</button>"+(act?"<button type=\"button\" class=\"row-activate\" data-activate=\""+esc(e.id)+"\">🟢 Activează</button>":"")+(del?"<button type=\"button\" class=\"row-delete\" data-delete=\""+esc(e.id)+"\">🗑 Șterge</button>":"")+"</div></div>";
       }).join("");
       list.querySelectorAll("[data-open]").forEach(b=>b.onclick=()=>previewEvent(b.dataset.open));
       list.querySelectorAll("[data-activate]").forEach(b=>b.onclick=()=>activate(b.dataset.activate));
+      list.querySelectorAll("[data-archive]").forEach(b=>b.onclick=()=>archiveEvent(b.dataset.archive));
       list.querySelectorAll("[data-delete]").forEach(b=>b.onclick=()=>deleteEvent(b.dataset.delete));
     }
-    const a=$("activateEventBtn"),d=$("deleteEventBtn"),p=$("previewEventBtn");
+    const a=$("activateEventBtn"),ar=$("archiveEventBtn"),d=$("deleteEventBtn"),p=$("previewEventBtn");
     if(a)a.disabled=!currentEvent||currentEvent.status!=="PLANIFICAT";
+    if(ar)ar.disabled=!currentEvent||currentEvent.status!=="ACTIV";
     if(d)d.disabled=!currentEvent||currentEvent.status==="ACTIV";
     if(p)p.disabled=!currentEvent;
   }
@@ -417,6 +419,15 @@
     await refresh();
   }
 
+  async function archiveEvent(id=currentEvent?.id){
+    if(!id)return;
+    const ev=events.find(x=>x.id===id)||currentEvent;
+    if(!ev||ev.status!=="ACTIV")return;
+    if(!confirm("Arhivezi „"+ev.name+"”?"))return;
+    await archiveEventCentral(id,user.id);
+    await refresh();
+  }
+
   async function deleteEvent(id=currentEvent?.id){
     const ev=events.find(x=>x.id===id);
     if(!ev||ev.status==="ACTIV")return;
@@ -437,6 +448,7 @@
   $("saveBtn")?.addEventListener("click",()=>save().catch(x=>alert(x.message)));
   $("createEventBtn")?.addEventListener("click",()=>create().catch(x=>alert(x.message)));
   $("activateEventBtn")?.addEventListener("click",()=>activate().catch(x=>alert(x.message)));
+  $("archiveEventBtn")?.addEventListener("click",()=>archiveEvent().catch(x=>alert(x.message)));
   $("previewEventBtn")?.addEventListener("click",()=>previewEvent().catch(x=>alert(x.message)));
   $("logoutAdmin")?.addEventListener("click",()=>{localStorage.removeItem("destindereUser");location.replace("login.html")});
 

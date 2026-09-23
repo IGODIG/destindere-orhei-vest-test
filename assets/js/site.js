@@ -43,11 +43,14 @@
     const heroEl=document.getElementById("home");
     const heroImage=String(cfg.event?.heroImage||"").trim();
     if(heroEl&&heroImage){
-      const safeUrl=heroImage.replace(/"/g,"%22").replace(/\\/g,"%5C");
-      heroEl.style.backgroundImage='linear-gradient(rgba(20,20,20,0.45),rgba(20,20,20,0.45)),url("'+safeUrl+'")';
-      heroEl.style.backgroundPosition="center";
-      heroEl.style.backgroundSize="cover";
-      heroEl.style.backgroundRepeat="no-repeat";
+      const img=document.createElement("img");
+      img.className="hero-configured-image";
+      img.alt="";
+      img.setAttribute("aria-hidden","true");
+      img.src=new URL(heroImage,location.href).href;
+      img.onload=()=>{heroEl.classList.add("has-configured-image")};
+      img.onerror=()=>{img.remove();heroEl.classList.remove("has-configured-image");console.warn("Imaginea Hero nu a putut fi încărcată:",heroImage)};
+      heroEl.appendChild(img);
     }
     nav.innerHTML='<li><a href="#home">Acasă</a></li>'+mods.filter(m=>m.showInMenu!==false&&m.id!=="countdown").map(m=>'<li><a href="#'+(m.id==="features"?"event":(m.id==="participation"?"register":m.id))+'">'+esc(m.id==="features"?(started?cfg.features.menuAfter:cfg.features.menuBefore):(m.id==="food"?cfg.food.title:(m.id==="participation"?"Confirmă participarea":m.label)))+"</a></li>").join("");
     document.title=(cfg.event?.name||"Destindere")+" • "+(cfg.event?.congregation||"");

@@ -127,6 +127,8 @@ function doGet(e) {
 
     // Datele publice sunt întotdeauna pentru evenimentul ACTIV.
     var activeEventId = getActiveEventId(ss);
+    var eventProducts = activeEventId ? getEventProductConfig(ss, activeEventId) : null;
+    if (eventProducts) CONFIG_PRODUSE = eventProducts;
     ensureEventDataColumns(ss);
     migrateLegacyEventData(ss, activeEventId);
 
@@ -352,6 +354,9 @@ function doPost(e) {
     if (!activeEventId) {
       throw new Error("Nu există niciun eveniment ACTIV.");
     }
+
+    var eventProducts = getEventProductConfig(ss, activeEventId);
+    if (eventProducts) CONFIG_PRODUSE = eventProducts;
 
     ensureEventDataColumns(ss);
     migrateLegacyEventData(ss, activeEventId);
@@ -1387,6 +1392,44 @@ function productConfigArray(config) {
   });
 
   return arr;
+}
+
+
+function getEventProductConfig(ss, eventId) {
+  var found = findEventRow(ss, eventId);
+  if (!found || !found.row[9]) return null;
+
+  var config = {};
+  try {
+    config = JSON.parse(String(found.row[9]));
+  } catch (e) {
+    return null;
+  }
+
+  var products = config && config.food && Array.isArray(config.food.products)
+    ? config.food.products
+    : [];
+
+  if (!products.length) return null;
+
+  var result = {};
+  products.forEach(function(p, index) {
+    if (!p) return;
+    var name = cleanValue(p.name);
+    if (!name) return;
+    var id = cleanValue(p.id) || ("event_" + eventId + "_" + (index + 1));
+    result[id] = {
+      id: id,
+      name: name,
+      required: parseCantitate(p.required),
+      unit: cleanValue(p.unit),
+      icon: cleanValue(p.icon) || "🎁",
+      active: p.enabled !== false && p.active !== false,
+      order: Number(p.order) || index + 1
+    };
+  });
+
+  return Object.keys(result).length ? result : null;
 }
 
 

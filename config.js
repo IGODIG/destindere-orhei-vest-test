@@ -21,9 +21,33 @@ function deepMerge(target, source) {
   });
   return target;
 }
+function normalizeTheme(value) {
+  const theme = String(value || "").trim().toLowerCase();
+  return ["auto","spring","summer","autumn","winter"].includes(theme) ? theme : "auto";
+}
+
+function resolveThemeFromDate(dateValue) {
+  const raw = String(dateValue || "").trim();
+  if (!raw) return "spring";
+  const match = raw.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (!match) return "spring";
+  const month = Number(match[2]);
+  if (month >= 3 && month <= 5) return "spring";
+  if (month >= 6 && month <= 8) return "summer";
+  if (month >= 9 && month <= 11) return "autumn";
+  return "winter";
+}
+
+function resolveTheme(cfg) {
+  const event = cfg?.event || {};
+  const configured = normalizeTheme(event.theme);
+  return configured === "auto" ? resolveThemeFromDate(event.date) : configured;
+}
+
 function normalizeConfig(c) {
   c = deepMerge(structuredClone(DEFAULT_CONFIG), c || {});
   c.event = c.event || {};
+  c.event.theme = normalizeTheme(c.event.theme);
   c.gallery = c.gallery || {images:[]};
   c.gallery.images = Array.isArray(c.gallery.images) ? c.gallery.images : [];
   c.features = c.features || {items:[]};

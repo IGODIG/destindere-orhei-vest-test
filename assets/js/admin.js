@@ -216,7 +216,7 @@
         // Lista centrală folosește metadata evenimentului ca sursă de adevăr
         // pentru dată, oră și locație. ConfigJSON rămâne pentru editor.
         const dateValue=e.date||"";
-        const rawTime=e.time||"";
+        const rawTime=e.config?.event?.time||e.time||"";
         const timeMatch=String(rawTime).match(/(?:^|\s)(\d{1,2}):(\d{2})(?::\d{2})?/);
         const timeValue=timeMatch
           ? String(timeMatch[1]).padStart(2,"0")+":"+timeMatch[2]

@@ -19,6 +19,78 @@ var CONFIG_PRODUSE_FALLBACK = {
 var CONFIG_PRODUSE = {};
 
 
+
+// ==========================================================
+// DATE PARTICIPANȚI / INVITAȚI PE EVENIMENT
+// ==========================================================
+
+function ensureEventDataColumns(ss) {
+  var invitati = ss.getSheetByName("Invitati");
+  if (invitati) {
+    var lastCol = Math.max(invitati.getLastColumn(), 2);
+    var headers = invitati.getRange(1,1,1,lastCol).getValues()[0].map(function(v){ return String(v || "").trim(); });
+    if (headers.indexOf("EventID") === -1) {
+      invitati.getRange(1,lastCol + 1).setValue("EventID");
+    }
+  }
+
+  var participanti = ss.getSheetByName("Participanti");
+  if (participanti) {
+    var pLastCol = Math.max(participanti.getLastColumn(), 10);
+    var pHeaders = participanti.getRange(1,1,1,pLastCol).getValues()[0].map(function(v){ return String(v || "").trim(); });
+    if (pHeaders.indexOf("EventID") === -1) {
+      participanti.getRange(1,pLastCol + 1).setValue("EventID");
+    }
+  }
+}
+
+function getEventIdColumn(sheet) {
+  var lastCol = sheet.getLastColumn();
+  if (lastCol < 1) return 0;
+  var headers = sheet.getRange(1,1,1,lastCol).getValues()[0];
+  for (var i = 0; i < headers.length; i++) {
+    if (String(headers[i] || "").trim().toLowerCase() === "eventid") return i + 1;
+  }
+  return 0;
+}
+
+function getActiveEventId(ss) {
+  var events = getEventRows(ss);
+  var active = events.filter(function(e){ return e.status === "ACTIV"; });
+  if (!active.length) return "";
+  active.sort(function(a,b){ return String(a.activeFrom || "").localeCompare(String(b.activeFrom || "")); });
+  return active[active.length - 1].id;
+}
+
+function migrateLegacyEventData(ss, eventId) {
+  if (!eventId) return;
+  ensureEventDataColumns(ss);
+
+  ["Invitati","Participanti"].forEach(function(name) {
+    var sheet = ss.getSheetByName(name);
+    if (!sheet || sheet.getLastRow() < 2) return;
+    var col = getEventIdColumn(sheet);
+    if (!col) return;
+
+    var range = sheet.getRange(2,col,sheet.getLastRow() - 1,1);
+    var values = range.getValues();
+    var changed = false;
+
+    for (var i = 0; i < values.length; i++) {
+      if (!String(values[i][0] || "").trim()) {
+        values[i][0] = eventId;
+        changed = true;
+      }
+    }
+
+    if (changed) range.setValues(values);
+  }
+}
+
+function eventRowMatches(row, eventId, eventColumnIndex) {
+  return String(row[eventColumnIndex] || "").trim() === String(eventId || "").trim();
+}
+
 // ==========================================================
 // GET: RĂSPUNS PENTRU SITE
 // ==========================================================
@@ -30,14 +102,10 @@ function doGet(e) {
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     CONFIG_PRODUSE = getProductConfig(ss);
 
-    // CONFIGURAȚIE CENTRALĂ V1.8
     if (e && e.parameter && e.parameter.type === "config") {
       return getCentralConfigResponse(ss);
     }
 
-    // ======================================================
-    // EVENIMENTE
-    // ======================================================
     if (e && e.parameter && e.parameter.type === "events") {
       return getEventsResponse(ss);
     }
@@ -50,8 +118,6 @@ function doGet(e) {
       return getActiveEventResponse(ss);
     }
 
-    // Returnează configurația produselor pentru site/admin.
-    // ?type=produse
     if (e && e.parameter && e.parameter.type === "produse") {
       return jsonOutput({
         success: true,
@@ -59,168 +125,66 @@ function doGet(e) {
       });
     }
 
-    // ======================================================
-    // 1. LISTA INVITAȚI
-    // ======================================================
+    // Datele publice sunt întotdeauna pentru evenimentul ACTIV.
+    var activeEventId = getActiveEventId(ss);
+    ensureEventDataColumns(ss);
+    migrateLegacyEventData(ss, activeEventId);
 
     var sheetInvitati = ss.getSheetByName("Invitati");
-
     var listaNume = [];
 
-    if (sheetInvitati) {
-
-      var dataInvitati =
-        sheetInvitati.getDataRange().getValues();
+    if (sheetInvitati && activeEventId) {
+      var eventColInvitati = getEventIdColumn(sheetInvitati);
+      var dataInvitati = sheetInvitati.getDataRange().getValues();
 
       for (var i = 1; i < dataInvitati.length; i++) {
+        if (eventColInvitati && !eventRowMatches(dataInvitati[i], activeEventId, eventColInvitati - 1)) continue;
 
-        var prenume =
-          dataInvitati[i][0]
-            ? String(dataInvitati[i][0]).trim()
-            : "";
+        var prenume = dataInvitati[i][0] ? String(dataInvitati[i][0]).trim() : "";
+        var nume = dataInvitati[i][1] ? String(dataInvitati[i][1]).trim() : "";
+        var numeComplet = (prenume + " " + nume).trim();
 
-        var nume =
-          dataInvitati[i][1]
-            ? String(dataInvitati[i][1]).trim()
-            : "";
-
-        var numeComplet =
-          (prenume + " " + nume).trim();
-
-        if (numeComplet !== "") {
-          listaNume.push(numeComplet);
-        }
+        if (numeComplet !== "") listaNume.push(numeComplet);
       }
     }
 
-
-    // ======================================================
-    // DOAR LISTA DE NUME
-    // ?type=nume
-    // ======================================================
-
-    if (
-      e &&
-      e.parameter &&
-      e.parameter.type === "nume"
-    ) {
-
-      return ContentService
-        .createTextOutput(
-          JSON.stringify(listaNume)
-        )
-        .setMimeType(
-          ContentService.MimeType.JSON
-        );
+    if (e && e.parameter && e.parameter.type === "nume") {
+      return jsonOutput(listaNume);
     }
 
-
-    // ======================================================
-    // 2. PARTICIPANȚI + PRODUSE
-    // ======================================================
-
-    var sheetParticipanti =
-      ss.getSheetByName("Participanti");
-
+    var sheetParticipanti = ss.getSheetByName("Participanti");
     var confirmed = 0;
     var declined = 0;
     var totalPersons = 0;
-
     var produseAdunate = {};
 
+    if (sheetParticipanti && activeEventId) {
+      var eventColParticipanti = getEventIdColumn(sheetParticipanti);
+      var dataParticipanti = sheetParticipanti.getDataRange().getValues();
 
-    if (sheetParticipanti) {
+      for (var j = 1; j < dataParticipanti.length; j++) {
+        if (eventColParticipanti && !eventRowMatches(dataParticipanti[j], activeEventId, eventColParticipanti - 1)) continue;
 
-      var dataParticipanti =
-        sheetParticipanti.getDataRange().getValues();
-
-      for (
-        var j = 1;
-        j < dataParticipanti.length;
-        j++
-      ) {
-
-        var status =
-          String(
-            dataParticipanti[j][2] || ""
-          )
-          .trim()
-          .toLowerCase();
-
-        var nrPers =
-          parseInt(
-            dataParticipanti[j][3],
-            10
-          ) || 0;
-
-
-        var ceAduce1 =
-          cleanProductKey(
-            dataParticipanti[j][4]
-          );
-
-        var cantitate1 =
-          parseCantitate(
-            dataParticipanti[j][5]
-          );
-
-
-        var ceAduce2 =
-          cleanProductKey(
-            dataParticipanti[j][6]
-          );
-
-        var cantitate2 =
-          parseCantitate(
-            dataParticipanti[j][7]
-          );
-
+        var status = String(dataParticipanti[j][2] || "").trim().toLowerCase();
+        var nrPers = parseInt(dataParticipanti[j][3], 10) || 0;
+        var ceAduce1 = cleanProductKey(dataParticipanti[j][4]);
+        var cantitate1 = parseCantitate(dataParticipanti[j][5]);
+        var ceAduce2 = cleanProductKey(dataParticipanti[j][6]);
+        var cantitate2 = parseCantitate(dataParticipanti[j][7]);
 
         if (status === "da") {
-
           confirmed++;
-
           totalPersons += nrPers;
-
-
-          if (ceAduce1) {
-
-            produtosAdunateSafe(
-              produseAdunate,
-              ceAduce1,
-              cantitate1
-            );
-
-          }
-
-
-          if (ceAduce2) {
-
-            produtosAdunateSafe(
-              produseAdunate,
-              ceAduce2,
-              cantitate2
-            );
-
-          }
-
+          if (ceAduce1) produtosAdunateSafe(produseAdunate, ceAduce1, cantitate1);
+          if (ceAduce2) produtosAdunateSafe(produseAdunate, ceAduce2, cantitate2);
         } else if (status === "nu") {
-
           declined++;
-
         }
       }
     }
 
-
-    // ======================================================
-    // STRUCTURARE PRODUSE
-    // ======================================================
-
     var produseFinale = {};
-
     for (var productId in CONFIG_PRODUSE) {
-
       var conf = CONFIG_PRODUSE[productId];
       var adus = produseAdunate[productId] || 0;
 
@@ -234,74 +198,36 @@ function doGet(e) {
         icon: conf.icon,
         active: conf.active !== false,
         order: conf.order || 999,
-        percent: conf.required > 0
-          ? Math.min(100, Math.round((adus / conf.required) * 100))
-          : 0,
+        percent: conf.required > 0 ? Math.min(100, Math.round((adus / conf.required) * 100)) : 0,
         complete: conf.required > 0 && adus >= conf.required,
         textFormatat: adus + " " + conf.unit
       };
     }
 
-    var totalInvited =
-      listaNume.length;
+    var totalInvited = listaNume.length;
+    var waiting = Math.max(0, totalInvited - confirmed - declined);
 
-    var waiting =
-      Math.max(
-        0,
-        totalInvited -
-        confirmed -
-        declined
-      );
-
-
-    var responseData = {
-
+    return jsonOutput({
+      success: true,
+      eventId: activeEventId,
       nume: listaNume,
-
       stats: {
-
         invited: totalInvited,
-
         confirmed: confirmed,
-
         declined: declined,
-
         waiting: waiting,
-
         persons: totalPersons
       },
-
       produse: produseFinale
-    };
-
-
-    return ContentService
-
-      .createTextOutput(
-        JSON.stringify(responseData)
-      )
-
-      .setMimeType(
-        ContentService.MimeType.JSON
-      );
-
+    });
 
   } catch (error) {
-
-    return ContentService
-
-      .createTextOutput(
-        JSON.stringify({
-          error: error.toString()
-        })
-      )
-
-      .setMimeType(
-        ContentService.MimeType.JSON
-      );
+    return jsonOutput({
+      success: false,
+      error: error.toString()
+    });
   }
 }
-
 
 // ==========================================================
 // POST
@@ -420,7 +346,24 @@ function doPost(e) {
 
     // ======================================================
     // PARTICIPANȚI
-    // LOGICA TA EXISTENTĂ RĂMÂNE
+    // ======================================================
+
+    var activeEventId = getActiveEventId(ss);
+    if (!activeEventId) {
+      throw new Error("Nu există niciun eveniment ACTIV.");
+    }
+
+    ensureEventDataColumns(ss);
+    migrateLegacyEventData(ss, activeEventId);
+
+    var requestedEventId = cleanValue(getValue(data, ["eventId"]));
+    if (requestedEventId && requestedEventId !== activeEventId) {
+      throw new Error("Evenimentul formularului nu mai este ACTIV.");
+    }
+
+    var eventIdForRow = activeEventId;
+
+    // LOGICA EXISTENTĂ CONTINUĂ
     // ======================================================
 
     var sheet =
@@ -694,7 +637,9 @@ function doPost(e) {
 
       observatii,
 
-      new Date()
+      new Date(),
+
+      eventIdForRow
 
     ]);
 

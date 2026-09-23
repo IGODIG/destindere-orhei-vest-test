@@ -1100,3 +1100,79 @@ body.season-spring .feature-card h3 {
 body.season-spring .section-title::after {
   background: linear-gradient(90deg, #75b889, #e6a9c4);
 }
+
+/* ==========================================================
+   SISTEM TEME V2
+   Tema este controlată de event.theme:
+   auto | spring | summer | autumn | winter
+========================================================== */
+
+body.theme-spring,
+body.theme-summer,
+body.theme-autumn,
+body.theme-winter{
+  --page-bg:#f7f3ee;
+  --section-bg:#f7f3ee;
+  --surface:#ffffff;
+  --surface-soft:rgba(255,255,255,.82);
+  --text:#2b2b2b;
+  --muted:#6b7280;
+  --footer-bg:#603813;
+  --footer-text:#ffffff;
+  --accent:var(--gold);
+  --hero-overlay:linear-gradient(120deg,rgba(20,20,20,.45),rgba(20,20,20,.18));
+  background:var(--page-bg);
+  color:var(--text);
+}
+
+body.theme-spring{
+  --primary:#49a96b;--primary-dark:#2f855a;--secondary:#2f6f4e;--gold:#f6c453;
+  --page-bg:#f5fbf4;--section-bg:#f5fbf4;--surface:#ffffff;--surface-soft:rgba(255,255,255,.88);
+  --muted:#64756b;--footer-bg:linear-gradient(135deg,#dff1e5,#f7e8f1);--footer-text:#496052;
+  --accent:#d99bb8;--hero-overlay:linear-gradient(120deg,rgba(47,133,90,.30),rgba(246,196,83,.16));
+}
+body.theme-summer{
+  --primary:#0ea5a8;--primary-dark:#087f83;--secondary:#126782;--gold:#facc15;
+  --page-bg:#effbfc;--section-bg:#f4fbfc;--surface:#ffffff;--surface-soft:rgba(255,255,255,.88);
+  --muted:#58717a;--footer-bg:linear-gradient(135deg,#075985,#0f766e);--footer-text:#ffffff;
+  --accent:#38bdf8;--hero-overlay:linear-gradient(120deg,rgba(8,127,131,.30),rgba(250,204,21,.16));
+}
+body.theme-autumn{
+  --primary:#d97706;--primary-dark:#b45309;--secondary:#8b4513;--gold:#fbbf24;
+  --page-bg:#f7f3ee;--section-bg:#f7f3ee;--surface:#ffffff;--surface-soft:rgba(255,255,255,.86);
+  --muted:#6b625b;--footer-bg:#603813;--footer-text:#ffffff;
+  --accent:#b85c38;--hero-overlay:linear-gradient(120deg,rgba(96,56,19,.34),rgba(217,119,6,.14));
+}
+body.theme-winter{
+  --primary:#3b82c4;--primary-dark:#245f96;--secondary:#244b73;--gold:#dbeafe;
+  --page-bg:#f1f6fb;--section-bg:#f6f9fc;--surface:#ffffff;--surface-soft:rgba(255,255,255,.90);
+  --muted:#607286;--footer-bg:linear-gradient(135deg,#102a43,#1e4b72);--footer-text:#ffffff;
+  --accent:#bfdbfe;--hero-overlay:linear-gradient(120deg,rgba(16,42,67,.42),rgba(59,130,196,.18));
+}
+
+body.theme-spring .features,body.theme-summer .features,body.theme-autumn .features,body.theme-winter .features{background:var(--section-bg)}
+body.theme-spring .register,body.theme-summer .register,body.theme-autumn .register,body.theme-winter .register{background:linear-gradient(180deg,var(--surface),var(--section-bg))}
+body.theme-spring .hero::before,body.theme-summer .hero::before,body.theme-autumn .hero::before,body.theme-winter .hero::before{background:var(--hero-overlay)}
+body.theme-spring .section-title::after,body.theme-summer .section-title::after,body.theme-autumn .section-title::after,body.theme-winter .section-title::after{background:linear-gradient(90deg,var(--primary),var(--accent))}
+body.theme-spring .section-title,body.theme-summer .section-title,body.theme-autumn .section-title,body.theme-winter .section-title{color:var(--secondary)}
+body.theme-spring .feature-card h3,body.theme-summer .feature-card h3,body.theme-autumn .feature-card h3,body.theme-winter .feature-card h3{color:var(--secondary)}
+body.theme-spring .btn,body.theme-spring button,body.theme-spring .register button,
+body.theme-summer .btn,body.theme-summer button,body.theme-summer .register button,
+body.theme-autumn .btn,body.theme-autumn button,body.theme-autumn .register button,
+body.theme-winter .btn,body.theme-winter button,body.theme-winter .register button{
+  background:linear-gradient(135deg,var(--primary),var(--accent));
+}
+body.theme-spring footer,body.theme-summer footer,body.theme-autumn footer,body.theme-winter footer{background:var(--footer-bg);color:var(--footer-text)}
+body.theme-spring .planned-event .container,body.theme-summer .planned-event .container,
+body.theme-autumn .planned-event .container,body.theme-winter .planned-event .container{
+  border-color:rgba(255,255,255,.34);
+  background:linear-gradient(145deg,rgba(255,255,255,.20),rgba(255,255,255,.06));
+}
+body.theme-spring .planned-event h1,body.theme-summer .planned-event h1,
+body.theme-autumn .planned-event h1,body.theme-winter .planned-event h1{
+  background:linear-gradient(90deg,#fff,var(--accent),#fff);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+body.theme-summer .theme-particles span{color:#facc15}
+body.theme-winter .theme-particles span{color:#dbeafe;text-shadow:0 0 10px rgba(191,219,254,.7)}
+body.theme-spring .theme-particles span{filter:drop-shadow(0 2px 5px rgba(120,150,130,.12))}

@@ -301,47 +301,7 @@
           </div>
         </section>
 
-        <section class="panel accordion" data-panel="location">
-          <button class="accordion-head" type="button">
-            <span
-              ><b>📍</b
-              ><span
-                ><strong>Locație</strong
-                ><small>Numele locației și harta Google Maps</small></span
-              ></span
-            ><span class="module-head-actions"
-              ><span class="module-status" data-status-for="location"></span
-              ><label class="menu-toggle"
-                ><input type="checkbox" data-menu-for="location" /><span
-                  >Header</span
-                ></label
-              ><span class="accordion-chevron" aria-hidden="true"></span
-            ></span>
-          </button>
-          <div class="accordion-body">
-            <div class="module-name-row">
-              <label
-                >Nume modul<input
-                  class="module-label-input"
-                  data-label-for="location"
-              /></label>
-              <p class="note inline-note">
-                Același nume va fi folosit automat în Header când modulul este
-                afișat acolo.
-              </p>
-            </div>
-            <div class="setting-grid two">
-              <label>Titlu<input id="locationTitle" /></label>
-              <label>Nume locație<input id="locationName" /></label>
-              <label class="wide"
-                >Google Maps Embed URL<textarea
-                  id="mapUrl"
-                  class="compact-text"
-                ></textarea>
-              </label>
-            </div>
-          </div>
-        </section>
+        
 
         <section class="panel accordion" data-panel="participation">
           <button class="accordion-head" type="button">
@@ -560,6 +520,48 @@
             </p>
           </div>
         </section>
+
+<section class="panel accordion" data-panel="location">
+          <button class="accordion-head" type="button">
+            <span
+              ><b>📍</b
+              ><span
+                ><strong>Locație</strong
+                ><small>Numele locației și harta Google Maps</small></span
+              ></span
+            ><span class="module-head-actions"
+              ><span class="module-status" data-status-for="location"></span
+              ><label class="menu-toggle"
+                ><input type="checkbox" data-menu-for="location" /><span
+                  >Header</span
+                ></label
+              ><span class="accordion-chevron" aria-hidden="true"></span
+            ></span>
+          </button>
+          <div class="accordion-body">
+            <div class="module-name-row">
+              <label
+                >Nume modul<input
+                  class="module-label-input"
+                  data-label-for="location"
+              /></label>
+              <p class="note inline-note">
+                Același nume va fi folosit automat în Header când modulul este
+                afișat acolo.
+              </p>
+            </div>
+            <div class="setting-grid two">
+              <label>Titlu<input id="locationTitle" /></label>
+              <label>Nume locație<input id="locationName" /></label>
+              <label class="wide"
+                >Google Maps Embed URL<textarea
+                  id="mapUrl"
+                  class="compact-text"
+                ></textarea>
+              </label>
+            </div>
+          </div>
+        </section>
       </div>
 
       <div class="bottom-actions">
@@ -574,21 +576,6 @@
 
     <script src="./config.js?v=20260922-2"></script>
     <script src="./assets/js/admin.js?v=20260922-2"></script>
-    <script>
-      // Fallback pentru acordeoane: funcționează independent de încărcarea
-      // logicii de configurare, astfel încât modulele să poată fi deschise
-      // chiar dacă API-ul sau o altă funcție admin are o eroare.
-      document.addEventListener("click", function (event) {
-        const head = event.target.closest(".accordion-head");
-        if (!head) return;
-        if (event.target.closest(".module-status, .menu-toggle")) return;
 
-        const panel = head.closest(".accordion");
-        if (!panel) return;
-
-        event.preventDefault();
-        panel.classList.toggle("open");
-      });
-    </script>
   </body>
 </html>

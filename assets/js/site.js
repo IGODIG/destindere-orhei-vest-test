@@ -123,7 +123,7 @@ const hero= '<section class="hero" id="home"'+heroStyle+'><div class="container"
             }
             const heroImage=String(plannedConfig.event?.heroImage||"").trim();
             const heroStyle=heroImage
-              ? ' style="background-image:linear-gradient(rgba(20,20,20,.42),rgba(20,20,20,.42)),url(\\''+attr(heroImage)+'\\')"'
+              ? ' style="background-image:linear-gradient(rgba(20,20,20,.42),rgba(20,20,20,.42)),url(&quot;'+attr(heroImage)+'&quot;)"'
               : "";
             window.CONFIG=normalizeConfig({
               ...plannedConfig,

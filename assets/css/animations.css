@@ -54,6 +54,36 @@ body.season-spring .leaves {
   opacity: 0.8;
 }
 
+body.season-spring .leaves {
+  --spring-flower: "🌸";
+  --spring-flower-alt: "🌼";
+  --spring-leaf: "🍃";
+}
+
+body.season-spring .leaves::before {
+  content: "🌸";
+  animation-duration: 14s;
+}
+
+body.season-spring .leaves::after {
+  content: "🌼";
+  animation-duration: 18s;
+  animation-delay: 5s;
+}
+
+body.season-spring .leaves::before,
+body.season-spring .leaves::after {
+  width: 1.6rem;
+  height: 1.6rem;
+}
+
+body.season-spring .leaves {
+  filter: none;
+}
+
+body.season-spring .leaves:has(+ body) { }
+
+
 body.season-spring .leaves::before {
   text-shadow:
     0 0 3px rgba(255,255,255,.7),
@@ -236,4 +266,15 @@ body.season-spring .leaves::after {
   100% {
     transform: translateY(0);
   }
+}
+
+
+/* Elemente suplimentare de primăvară: 4 flori + 3 frunze */
+body.season-spring .leaves {
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'%3E%3Cg fill='none' stroke='%23d99bb8' stroke-width='1.5'%3E%3Ccircle cx='14' cy='7' r='3'/%3E%3Ccircle cx='14' cy='21' r='3'/%3E%3Ccircle cx='7' cy='14' r='3'/%3E%3Ccircle cx='21' cy='14' r='3'/%3E%3C/g%3E%3Ccircle cx='14' cy='14' r='2' fill='%23e6b95c'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 26 26'%3E%3Cpath d='M4 20C9 8 16 5 22 4c-1 7-5 14-18 16Z' fill='%2375b889' fill-opacity='.75'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 18% -40px, 72% -90px;
+  background-size: 24px 24px, 22px 22px;
 }

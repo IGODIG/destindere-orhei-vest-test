@@ -213,9 +213,16 @@
     }
     if(list){
       list.innerHTML=events.map(e=>{
-        const dateValue=e.date||e.config?.event?.date||"";
-        const timeValue=e.time||e.config?.event?.time||"00:00";
-        const locationValue=e.location||e.config?.event?.location||"";
+        const eventConfig=e.config?.event||{};
+        const dateValue=eventConfig.date||e.date||"";
+        const rawTime=eventConfig.time||"";
+        const timeMatch=String(rawTime).match(/(?:^|\s)(\d{1,2}):(\d{2})(?::\d{2})?/);
+        const timeValue=timeMatch
+          ? String(timeMatch[1]).padStart(2,"0")+":"+timeMatch[2]
+          : (e.time&&String(e.time).match(/(?:^|\s)(\d{1,2}):(\d{2})(?::\d{2})?/)
+              ? String(String(e.time).match(/(?:^|\s)(\d{1,2}):(\d{2})(?::\d{2})?/)[1]).padStart(2,"0")+":"+String(e.time).match(/(?:^|\s)(\d{1,2}):(\d{2})(?::\d{2})?/)[2]
+              : "00:00");
+        const locationValue=eventConfig.location||e.location||"";
         const d=dateValue?new Date(dateValue+"T"+timeValue):null;
         const date=d&&!isNaN(d)?new Intl.DateTimeFormat("ro-RO",{day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit"}).format(d):"Dată nespecificată";
         const del=e.status!=="ACTIV",act=e.status==="PLANIFICAT",arch=e.status==="ACTIV";

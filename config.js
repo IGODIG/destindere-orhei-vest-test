@@ -99,6 +99,7 @@ async function saveEventCentral(event,userId){
     date:ev.date||"",
     time:ev.time||"",
     location:ev.location||"",
+    theme:ev.theme||"auto",
     updatedBy:userId||""
   });
   return d.event;

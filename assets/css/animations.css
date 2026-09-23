@@ -279,3 +279,22 @@ body.season-spring .leaves {
   background-position: 18% -40px, 72% -90px;
   background-size: 24px 24px, 22px 22px;
 }
+
+
+/* ==========================================================
+   THEME PARTICLES V2
+========================================================== */
+.theme-particles-spring span{
+  animation-name:themeParticleFall;
+}
+.theme-particles-summer span{
+  animation-name:themeParticleFloat;
+}
+.theme-particles-autumn span{
+  animation-name:themeParticleFall;
+  animation-duration:calc(12s + (var(--i) * 1.2s));
+}
+.theme-particles-winter span{
+  animation-name:themeParticleFall;
+  animation-duration:calc(14s + (var(--i) * 1.3s));
+}

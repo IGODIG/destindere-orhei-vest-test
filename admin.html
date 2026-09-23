@@ -574,5 +574,21 @@
 
     <script src="./config.js?v=20260922-2"></script>
     <script src="./assets/js/admin.js?v=20260922-2"></script>
+    <script>
+      // Fallback pentru acordeoane: funcționează independent de încărcarea
+      // logicii de configurare, astfel încât modulele să poată fi deschise
+      // chiar dacă API-ul sau o altă funcție admin are o eroare.
+      document.addEventListener("click", function (event) {
+        const head = event.target.closest(".accordion-head");
+        if (!head) return;
+        if (event.target.closest(".module-status, .menu-toggle")) return;
+
+        const panel = head.closest(".accordion");
+        if (!panel) return;
+
+        event.preventDefault();
+        panel.classList.toggle("open");
+      });
+    </script>
   </body>
 </html>

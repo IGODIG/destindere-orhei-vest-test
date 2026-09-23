@@ -69,22 +69,29 @@
           const planned=events
             .filter(e=>e.status==="PLANIFICAT")
             .sort((a,b)=>{
-              const da=new Date((a.date||"")+"T"+(a.time||"00:00")).getTime();
-              const db=new Date((b.date||"")+"T"+(b.time||"00:00")).getTime();
+              const aDate=a.date||a.config?.event?.date||"";
+              const bDate=b.date||b.config?.event?.date||"";
+              const aTime=a.time||a.config?.event?.time||"00:00";
+              const bTime=b.time||b.config?.event?.time||"00:00";
+              const da=new Date(aDate+"T"+aTime).getTime();
+              const db=new Date(bDate+"T"+bTime).getTime();
               return da-db;
             });
           const next=planned.find(e=>{
-            const t=new Date((e.date||"")+"T"+(e.time||"00:00")).getTime();
+            const date=e.date||e.config?.event?.date||"";
+            const time=e.time||e.config?.event?.time||"00:00";
+            const t=new Date(date+"T"+time).getTime();
             return !Number.isNaN(t) && t>=Date.now();
           }) || planned[0];
           if(next){
-            const eventName=next.name||"Următorul eveniment";
-            const congregation=next.congregation||"Congregația Orhei-Vest";
-            const date=formatDate(next.date);
-            const time=next.time||"";
-            const location=next.location||"";
+            const eventName=next.name||next.config?.event?.name||"Următorul eveniment";
+            const congregation=next.congregation||next.config?.event?.congregation||"Congregația Orhei-Vest";
+            const dateValue=next.date||next.config?.event?.date||"";
+            const date=formatDate(dateValue);
+            const time=next.time||next.config?.event?.time||"";
+            const location=next.location||next.config?.event?.location||"";
             window.CONFIG=normalizeConfig({
-              event:{name:eventName,congregation:congregation,date:next.date||"",time:time,location:location},
+              event:{name:eventName,congregation:congregation,date:dateValue,time:time,location:location},
               modules:[]
             });
             document.title=eventName+" • "+congregation;

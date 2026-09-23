@@ -911,7 +911,9 @@ function eventRecordFromRow(row) {
   // și config.event ca fallback. Astfel lista de evenimente nu mai pierde data.
   var eventConfig = config && config.event ? config.event : {};
   var rawDate = row[3] || eventConfig.date || "";
-  var rawTime = row[4] || eventConfig.time || "";
+  // ConfigJSON păstrează ora introdusă în editor ca text HH:mm și nu trebuie reinterpretată ca Date.
+  // Folosim această valoare înaintea coloanei Ora, care poate fi convertită de Sheets în Date.
+  var rawTime = String(eventConfig.time || "").trim() || row[4] || "";
   var formattedTime = "";
   if (rawTime instanceof Date && !isNaN(rawTime.getTime())) {
     formattedTime = Utilities.formatDate(rawTime, Session.getScriptTimeZone(), "HH:mm");

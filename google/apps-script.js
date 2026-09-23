@@ -998,8 +998,21 @@ function getEventRows(ss) {
   migrateLegacyConfigToEvents(ss);
   var sheet = ensureEventsSheet(ss);
   if (sheet.getLastRow() < 2) return [];
-  var values = sheet.getRange(2, 1, sheet.getLastRow() - 1, 14).getValues();
-  return values.filter(function(row) { return String(row[0] || "").trim() !== ""; }).map(eventRecordFromRow);
+  var range = sheet.getRange(2, 1, sheet.getLastRow() - 1, 14);
+  var values = range.getValues();
+  var displayValues = range.getDisplayValues();
+
+  return values
+    .map(function(row, index) {
+      // Pentru ora evenimentului folosim valoarea afișată în Sheets.
+      // Astfel nu mai depindem de conversia Date/fus orar a Apps Script.
+      var displayRow = displayValues[index];
+      var copy = row.slice();
+      copy[4] = displayRow[4] || row[4];
+      return copy;
+    })
+    .filter(function(row) { return String(row[0] || "").trim() !== ""; })
+    .map(eventRecordFromRow);
 }
 
 function getEventsResponse(ss) {

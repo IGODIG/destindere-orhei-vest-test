@@ -116,6 +116,39 @@ body.season-spring .spring-particles span:nth-child(7) { --left: 94%; --size: 1r
 }
 
 /* ==========================================
+   GENERIC THEME PARTICLES
+========================================== */
+.theme-particles{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  overflow:hidden;
+  z-index:1;
+}
+.theme-particles span{
+  position:absolute;
+  top:-10vh;
+  left:calc((var(--i) + 1) * 10% - 4%);
+  font-size:1.2rem;
+  line-height:1;
+  opacity:.72;
+  animation:themeParticleFall calc(10s + (var(--i) * 1s)) linear infinite;
+  animation-delay:calc(var(--i) * -1.7s);
+}
+.theme-particles-summer span{animation-name:themeParticleFloat;opacity:.45;font-size:.9rem}
+.theme-particles-winter span{opacity:.68;font-size:1.15rem}
+@keyframes themeParticleFall{
+  0%{transform:translate3d(0,-12vh,0) rotate(0deg);opacity:0}
+  10%{opacity:.72}
+  50%{transform:translate3d(30px,55vh,0) rotate(180deg)}
+  100%{transform:translate3d(-20px,115vh,0) rotate(360deg);opacity:0}
+}
+@keyframes themeParticleFloat{
+  0%,100%{transform:translate3d(-10px,0,0);opacity:.18}
+  50%{transform:translate3d(15px,35vh,0);opacity:.55}
+}
+
+/* ==========================================
    Hover Card
 ========================================== */
 

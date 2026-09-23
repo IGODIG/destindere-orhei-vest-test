@@ -46,9 +46,9 @@ body {
   --border: rgba(255, 255, 255, 0.25);
   --glass: rgba(255, 255, 255, 0.18);
 
-  --shadow: 0 14px 38px rgba(91, 54, 24, 0.10);
+  --shadow: 0 20px 50px rgba(0, 0, 0, 0.12);
 
-  --radius: 20px;
+  --radius: 22px;
   --transition: 0.35s ease;
 
   --max-width: 1200px;
@@ -64,7 +64,7 @@ body {
 }
 
 section {
-  padding: 72px 0;
+  padding: 90px 0;
 }
 
 img {
@@ -90,12 +90,12 @@ ul {
 
   text-align: center;
 
-  font-size: 2.15rem;
+  font-size: 2.4rem;
   line-height: 1.2;
 
   color: var(--secondary);
 
-  margin: 0 0 34px;
+  margin: 0 0 45px;
 
   font-weight: 700;
 }
@@ -105,12 +105,12 @@ ul {
 
   display: block;
 
-  width: 56px;
-  height: 3px;
+  width: 70px;
+  height: 4px;
 
   border-radius: 10px;
 
-  margin: 12px auto 0;
+  margin: 16px auto 0;
 
   background: linear-gradient(to right, var(--primary), var(--gold));
 }
@@ -142,11 +142,11 @@ header nav {
   justify-content: space-between;
   align-items: center;
 
-  height: 68px;
+  height: 80px;
 }
 
 .logo {
-  font-size: 1.25rem;
+  font-size: 1.4rem;
 
   font-weight: 700;
 
@@ -156,7 +156,7 @@ header nav {
 nav ul {
   display: flex;
 
-  gap: 28px;
+  gap: 35px;
 }
 
 nav a {
@@ -198,7 +198,7 @@ nav a.active::after {
 ========================================================== */
 
 .hero {
-  min-height: 82vh;
+  min-height: 100vh;
 
   display: flex;
 
@@ -240,11 +240,11 @@ nav a.active::after {
 .hero h1 {
   color: white;
 
-  font-size: 3.55rem;
+  font-size: 4rem;
 
   font-weight: 700;
 
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 
   text-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
 }
@@ -254,17 +254,17 @@ nav a.active::after {
 
   font-weight: 400;
 
-  font-size: 1.55rem;
+  font-size: 1.8rem;
 
-  margin-bottom: 14px;
+  margin-bottom: 18px;
 }
 
 .hero p {
   color: #f5f5f5;
 
-  font-size: 1.05rem;
+  font-size: 1.15rem;
 
-  margin-bottom: 28px;
+  margin-bottom: 45px;
 }
 
 /* ==========================================================
@@ -277,7 +277,7 @@ nav a.active::after {
   align-items: center;
   justify-content: center;
 
-  padding: 14px 34px;
+  padding: 18px 42px;
 
   border-radius: 50px;
 
@@ -303,8 +303,8 @@ nav a.active::after {
 ========================================================== */
 
 .countdown {
-  margin-top: 0;
-  margin-bottom: -2px;
+  margin-top: 10px;
+  margin-bottom: -10px;
 
   position: relative;
 
@@ -313,7 +313,7 @@ nav a.active::after {
 
 .countdown .container {
   display: block;
-  margin-bottom: -30px;
+  margin-bottom: -50px;
 }
 
 .countdown-grid {
@@ -321,7 +321,7 @@ nav a.active::after {
 
   grid-template-columns: repeat(4, 1fr);
 
-  gap: 18px;
+  gap: 25px;
 }
 
 .countdown-card {
@@ -333,7 +333,7 @@ nav a.active::after {
 
   border-radius: var(--radius);
 
-  padding: 26px 18px;
+  padding: 35px 20px;
 
   text-align: center;
 
@@ -349,7 +349,7 @@ nav a.active::after {
 .countdown-card span {
   display: block;
 
-  font-size: 2.65rem;
+  font-size: 3rem;
 
   font-weight: 700;
 
@@ -385,7 +385,7 @@ nav a.active::after {
 
   grid-template-columns: repeat(3, 1fr);
 
-  gap: 22px;
+  gap: 30px;
 }
 
 .feature-card {
@@ -397,7 +397,7 @@ nav a.active::after {
 
   border-radius: var(--radius);
 
-  padding: 32px 24px;
+  padding: 45px 30px;
 
   text-align: center;
 
@@ -413,13 +413,13 @@ nav a.active::after {
 }
 
 .feature-card .icon {
-  font-size: 3rem;
+  font-size: 3.5rem;
 
-  margin-bottom: 14px;
+  margin-bottom: 20px;
 }
 
 .feature-card h3 {
-  font-size: 1.2rem;
+  font-size: 1.4rem;
 
   color: var(--secondary);
 
@@ -549,14 +549,14 @@ nav a.active::after {
 }
 
 .stat-card {
-  width: 165px;
-  height: 135px;
+  width: 150px;
+  height: 150px;
 
   background: #ffffff;
 
   border-radius: var(--radius);
 
-  padding: 16px;
+  padding: 20px;
 
   display: flex;
 
@@ -588,7 +588,7 @@ nav a.active::after {
 }
 
 .stat-card span {
-  font-size: 2.35rem;
+  font-size: 2.5rem;
 
   font-weight: 700;
 
@@ -622,7 +622,7 @@ nav a.active::after {
 
   width: 100%;
 
-  height: 410px;
+  height: 450px;
 
   border: 0;
 }
@@ -750,102 +750,3 @@ footer {
 .hero-participation-btn{display:inline-flex;align-items:center;justify-content:center;min-width:220px;text-decoration:none;font-weight:600}
 
 .profile-section{padding:50px 0}.profile-card{max-width:520px;margin:auto;text-align:center;background:rgba(255,255,255,.78);padding:28px;border-radius:22px;box-shadow:0 16px 40px rgba(0,0,0,.08)}.profile-card h2{color:var(--secondary);margin-bottom:6px}.profile-card p{color:var(--gray);margin-bottom:18px}.nav-user{white-space:nowrap}
-
-
-/* ==========================================================
-   UI REFINEMENT
-========================================================== */
-
-.hero::after{
-  content:"";
-  position:absolute;
-  inset:auto 0 0;
-  height:180px;
-  background:linear-gradient(to top,rgba(247,243,238,.22),transparent);
-  pointer-events:none;
-}
-.hero .container{max-width:920px;padding:90px 20px 40px}
-.hero h2:first-child{font-size:1.05rem;letter-spacing:.04em;font-weight:500;opacity:.95}
-.hero .hero-bible-ref{margin-bottom:0;font-size:.82rem;letter-spacing:.08em;font-weight:500;opacity:.9}
-.section-title{letter-spacing:-.02em}
-.countdown-card{min-height:120px;display:flex;flex-direction:column;justify-content:center}
-.countdown-card small{font-size:.82rem;letter-spacing:.05em}
-.feature-card{min-height:170px;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.feature-card .icon{font-size:3rem;margin-bottom:12px}
-.feature-card h3{margin-bottom:0}
-.stats .stat-card{min-height:135px}
-.location .section-title{margin-bottom:28px}
-.map{border:1px solid rgba(139,69,19,.08)}
-
-@media (max-width: 768px){
-  section{padding:58px 0}
-  .hero{min-height:82vh;padding:100px 18px 50px}
-  .hero .container{padding:55px 10px 25px}
-  .hero h1{font-size:2.45rem}
-  .hero h2{font-size:1.15rem}
-  .section-title{font-size:1.85rem;margin-bottom:28px}
-  .countdown-card{min-height:105px;padding:20px 12px}
-  .countdown-card span{font-size:2.15rem}
-  .feature-card{min-height:150px;padding:25px 18px}
-  .feature-card .icon{font-size:2.65rem}
-}
-
-
-/* ==========================================================
-   PUBLIC MODULES - VISUAL SYSTEM (aligned with PROD)
-========================================================== */
-
-/* Shared section rhythm */
-section{position:relative}
-.memories,.participation,.gallery,.features,.stats,.location{background:#f7f3ee}
-.memories .container,.participation .container,.gallery .container,.features .container,.stats .container,.location .container{display:block}
-
-/* Memories / upload */
-.memories-text{max-width:760px;margin:-8px auto 24px;text-align:center;color:var(--gray);font-size:.88rem}
-.upload-card{max-width:760px;margin:0 auto;background:rgba(255,255,255,.92);padding:30px 34px;border-radius:24px;box-shadow:var(--shadow);text-align:center}
-.upload-icon{font-size:1.8rem;margin-bottom:7px}
-.upload-card h3{font-size:1rem;color:var(--text);margin-bottom:9px}
-.upload-button{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:7px 12px;border:1px solid #e8e0d7;border-radius:8px;background:#fff;color:#6b625b;font-size:.78rem;cursor:pointer}
-.upload-submit{border:0;padding:11px 28px;font-size:.82rem;margin-top:8px}
-
-/* Features */
-.features-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;max-width:1080px;margin:auto}
-.feature-card{background:rgba(255,255,255,.92);border:1px solid rgba(255,255,255,.8);border-radius:18px;padding:27px 20px;min-height:132px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;box-shadow:var(--shadow)}
-.feature-card .icon{font-size:2.55rem;line-height:1;margin-bottom:13px}
-.feature-card h3{font-size:1rem;color:var(--secondary);margin:0;font-weight:700}
-
-/* Gallery */
-.gallery-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;max-width:1080px;margin:auto}
-.gallery-card{background:#fff;border-radius:12px;overflow:hidden;box-shadow:var(--shadow);height:120px;position:relative}
-.gallery-card img{width:100%;height:100%;object-fit:cover}
-.gallery-missing{position:absolute;inset:0;display:none;place-items:center;text-align:center;background:linear-gradient(135deg,#fff8ef,#f5e8d8);color:#9a6b45}
-.gallery-missing span{font-size:2.2rem;display:block}.gallery-missing small{font-size:.7rem}
-.gallery .btn{padding:12px 25px;font-size:.78rem;margin-top:18px}
-
-/* Participation */
-.participation> .container>p{text-align:center;max-width:720px;margin:-8px auto 22px;color:var(--gray);font-size:.82rem}
-#registrationForm{max-width:680px;margin:auto;padding:22px 28px}
-#registrationForm label{font-size:.78rem;font-weight:600;color:#5f574f}
-#registrationForm input,#registrationForm select,#registrationForm textarea{width:100%;margin-top:6px;padding:11px 13px;border:1px solid #e6dfd7;border-radius:10px;background:#fff;font:inherit;font-size:.78rem;color:#4b453f;outline:none}
-#registrationForm textarea{min-height:90px;resize:vertical}
-#registrationForm button{border:0;cursor:pointer;padding:11px 28px;font-size:.82rem}
-.product-row{display:grid;grid-template-columns:minmax(0,1fr) 120px;gap:9px;margin:8px 0}
-
-/* Statistics */
-.stats{background:#fffdf9}
-.stats-grid{display:flex;justify-content:center;gap:28px;max-width:700px;margin:auto}
-.stat-card{width:120px;min-height:105px;background:#fff;border-radius:16px;padding:15px;text-align:center;display:flex;flex-direction:column;justify-content:center;box-shadow:var(--shadow)}
-.stat-card span{font-size:1.65rem;font-weight:700;color:var(--primary);line-height:1.1}.stat-card div{font-size:.68rem;color:#6b625b;margin-top:7px}
-
-/* Food */
-.food-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;max-width:1000px;margin:auto}
-.food-card{background:#fff;border-radius:18px;padding:18px;box-shadow:var(--shadow)}
-.food-card-icon{font-size:2rem}.food-card h3{font-size:.95rem;color:var(--secondary);margin:6px 0 10px}.food-progress-label{font-size:.65rem;color:#8b8177}.food-progress-number{font-size:.75rem;font-weight:600;color:#5e564f;margin:3px 0 8px}.food-progress{height:9px;background:#eee5dc;border-radius:999px;overflow:hidden}.food-progress-bar{height:100%;background:linear-gradient(90deg,var(--primary),var(--gold));border-radius:999px}
-
-/* Location */
-.location{background:#fff}
-.location .section-title{margin-bottom:22px}.location p{text-align:center;color:var(--gray);font-size:.82rem;margin-bottom:16px}.map{max-width:1080px;margin:auto;overflow:hidden;border-radius:16px;box-shadow:var(--shadow)}.map iframe{display:block;width:100%;height:410px;min-height:410px;border:0}
-
-/* Responsive module system */
-@media(max-width:900px){.gallery-grid{grid-template-columns:repeat(2,1fr)}.features-grid,.food-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:560px){.gallery-grid,.features-grid,.food-grid{grid-template-columns:1fr}.stats-grid{gap:12px}.stat-card{width:110px}.upload-card{padding:24px 18px}.product-row{grid-template-columns:1fr}.gallery-card{height:180px}.map iframe{height:340px;min-height:340px}}

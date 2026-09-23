@@ -132,18 +132,30 @@ function doGet(e) {
     ensureEventDataColumns(ss);
     migrateLegacyEventData(ss, activeEventId);
 
-    var sheetInvitati = ss.getSheetByName("Invitati");
+    var sheetInvitati = ss.getSheetByName("Invitati") || ss.getSheetByName("Invitați");
     var listaNume = [];
 
     if (sheetInvitati && activeEventId) {
       var eventColInvitati = getEventIdColumn(sheetInvitati);
       var dataInvitati = sheetInvitati.getDataRange().getValues();
+      var headersInvitati = dataInvitati.length ? dataInvitati[0].map(function(v){ return normalizeLoginValue(v); }) : [];
+
+      function findInvitatiHeader(names, fallback) {
+        for (var h = 0; h < names.length; h++) {
+          var idx = headersInvitati.indexOf(normalizeLoginValue(names[h]));
+          if (idx !== -1) return idx;
+        }
+        return fallback;
+      }
+
+      var prenumeCol = findInvitatiHeader(["Prenume", "First name"], 0);
+      var numeCol = findInvitatiHeader(["Nume", "Nume de familie", "Familie", "Last name"], 1);
 
       for (var i = 1; i < dataInvitati.length; i++) {
         if (eventColInvitati && !eventRowMatches(dataInvitati[i], activeEventId, eventColInvitati - 1)) continue;
 
-        var prenume = dataInvitati[i][0] ? String(dataInvitati[i][0]).trim() : "";
-        var nume = dataInvitati[i][1] ? String(dataInvitati[i][1]).trim() : "";
+        var prenume = dataInvitati[i][prenumeCol] ? String(dataInvitati[i][prenumeCol]).trim() : "";
+        var nume = dataInvitati[i][numeCol] ? String(dataInvitati[i][numeCol]).trim() : "";
         var numeComplet = (prenume + " " + nume).trim();
 
         if (numeComplet !== "") listaNume.push(numeComplet);

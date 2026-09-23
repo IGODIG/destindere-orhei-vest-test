@@ -226,7 +226,7 @@
       list.querySelectorAll("[data-archive]").forEach(b=>b.onclick=()=>archiveEvent(b.dataset.archive));
       list.querySelectorAll("[data-delete]").forEach(b=>b.onclick=()=>deleteEvent(b.dataset.delete));
     }
-    const a=$("activateEventBtn"),ar=$("archiveEventBtn"),d=$("deleteEventBtn"),p=$("previewEventBtn);
+    const a=$("activateEventBtn"),ar=$("archiveEventBtn"),d=$("deleteEventBtn"),p=$("previewEventBtn");
     if(a)a.disabled=!currentEvent||currentEvent.status!=="PLANIFICAT";
     if(ar)ar.disabled=!currentEvent||currentEvent.status!=="ACTIV";
     if(d)d.disabled=!currentEvent||currentEvent.status==="ACTIV";

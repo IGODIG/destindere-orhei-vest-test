@@ -523,30 +523,55 @@ nav a.active::after {
   box-shadow: 0 0 0 5px rgba(217, 119, 6, 0.15);
 }
 
-.register button {
+/* ==========================================================
+   SHARED BUTTON STYLE
+   Toate butoanele principale folosesc același limbaj vizual.
+========================================================== */
+
+.btn,
+button,
+.register button,
+.hero-participation-btn,
+.upload-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
+  padding: 14px 28px;
   border: none;
-
-  cursor: pointer;
-
-  padding: 18px;
-
-  border-radius: 50px;
-
+  border-radius: 15px;
+  font-family: "Poppins", sans-serif;
   font-size: 1rem;
-
   font-weight: 600;
-
-  color: white;
-
+  line-height: 1.2;
+  color: #ffffff;
+  text-decoration: none;
   background: linear-gradient(135deg, var(--primary), var(--gold));
-
+  box-shadow: var(--shadow);
+  cursor: pointer;
   transition: var(--transition);
+  box-sizing: border-box;
 }
 
-.register button:hover {
+.btn:hover,
+button:hover,
+.register button:hover,
+.hero-participation-btn:hover,
+.upload-button:hover {
   transform: translateY(-4px);
-
   box-shadow: 0 15px 35px rgba(217, 119, 6, 0.35);
+}
+
+.btn:disabled,
+button:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: var(--shadow);
+}
+
+.register button {
+  width: 100%;
 }
 
 .hero-participation-btn {

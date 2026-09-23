@@ -169,9 +169,9 @@ function doGet(e) {
 
         var status = String(dataParticipanti[j][2] || "").trim().toLowerCase();
         var nrPers = parseInt(dataParticipanti[j][3], 10) || 0;
-        var ceAduce1 = cleanProductKey(dataParticipanti[j][4]);
+        var ceAduce1 = resolveProductId(CONFIG_PRODUSE, dataParticipanti[j][4]);
         var cantitate1 = parseCantitate(dataParticipanti[j][5]);
-        var ceAduce2 = cleanProductKey(dataParticipanti[j][6]);
+        var ceAduce2 = resolveProductId(CONFIG_PRODUSE, dataParticipanti[j][6]);
         var cantitate2 = parseCantitate(dataParticipanti[j][7]);
 
         if (status === "da") {
@@ -1943,6 +1943,34 @@ function cleanProductKey(val) {
 // ==========================================================
 // AJUTĂTOR PENTRU CALCULAREA PRODUSELOR
 // ==========================================================
+
+function normalizeProductKeyForMatch(value) {
+  return String(value || "")
+    .trim()
+    .toLocaleLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+}
+
+function resolveProductId(config, value) {
+  var raw = cleanProductKey(value);
+  if (!raw) return "";
+
+  if (Object.prototype.hasOwnProperty.call(config, raw)) return raw;
+
+  var target = normalizeProductKeyForMatch(raw);
+  for (var id in config) {
+    var product = config[id];
+    if (!product) continue;
+
+    if (normalizeProductKeyForMatch(product.id) === target ||
+        normalizeProductKeyForMatch(product.name) === target) {
+      return id;
+    }
+  }
+
+  return raw;
+}
 
 function produtosAdunateSafe(
   obiect,

@@ -35,17 +35,28 @@
     cfg=normalizeConfig(cfg||{});
     cfg.modules=Array.isArray(cfg.modules)?cfg.modules:[];
     const byId=new Map(cfg.modules.map(m=>[m.id,m]));
-    cfg.modules=MODULE_IDS.map(id=>byId.get(id)||{
-      id,label:META[id][1],enabled:cfg[id]?.enabled!==false,showInMenu:id!=="countdown"
+    cfg.modules=MODULE_IDS.map(id=>{
+      const existing=byId.get(id)||{};
+      const legacyLabel=cfg[id]?.label;
+      return {
+        ...existing,
+        id,
+        label:String(existing.label||legacyLabel||META[id][1]),
+        enabled:existing.enabled!==undefined?!!existing.enabled:cfg[id]?.enabled!==false,
+        showInMenu:existing.showInMenu!==undefined?!!existing.showInMenu:id!=="countdown"
+      };
     });
     MODULE_IDS.forEach(id=>{
       cfg[id]=cfg[id]||{};
-      cfg[id].enabled=!!cfg.modules.find(m=>m.id===id)?.enabled;
+      const m=cfg.modules.find(x=>x.id===id);
+      cfg[id].enabled=!!m.enabled;
+      cfg[id].label=m.label;
+      cfg[id].showInMenu=m.showInMenu!==false;
     });
   }
 
   function getModule(id){return cfg.modules.find(m=>m.id===id)}
-  function syncLegacyEnabled(){MODULE_IDS.forEach(id=>{const m=getModule(id);if(m)cfg[id].enabled=!!m.enabled})}
+  function syncLegacyEnabled(){MODULE_IDS.forEach(id=>{const m=getModule(id);if(m){cfg[id].enabled=!!m.enabled;cfg[id].label=m.label;cfg[id].showInMenu=m.showInMenu!==false}})}
   function syncPanelOrder(){
     const wrap=$("settingsPanels");if(!wrap)return;
     const rank=new Map(cfg.modules.map((m,i)=>[m.id,i]));
@@ -74,7 +85,7 @@
       if(label.dataset.bound)return;label.dataset.bound="1";
       label.addEventListener("click",e=>e.stopPropagation());
       const input=label.querySelector("input");
-      input?.addEventListener("change",e=>{const m=getModule(input.dataset.menuFor);if(m)m.showInMenu=e.target.checked});
+      input?.addEventListener("change",e=>{const m=getModule(input.dataset.menuFor);if(m){m.showInMenu=e.target.checked;syncLegacyEnabled()}});
     });
   }
   function bindSortable(){
@@ -172,6 +183,10 @@
       preview.onerror=()=>{preview.style.display="none";placeholder.style.display="grid"};
     }
     syncPanelOrder();syncPanelHeaders();renderGallery();renderFeatures();renderFood();renderStats();updateParticipationHint();bindAccordion();bindSortable();
+    document.querySelectorAll(".module-label-input").forEach(input=>{
+      const m=getModule(input.dataset.labelFor);
+      if(m)input.value=m.label||META[m.id][1];
+    });
   }
   function collect(){
     ensureConfigShape();syncOrderFromDOM();cfg.event=cfg.event||{};const e=cfg.event;
@@ -211,7 +226,7 @@
       list.querySelectorAll("[data-archive]").forEach(b=>b.onclick=()=>archiveEvent(b.dataset.archive));
       list.querySelectorAll("[data-delete]").forEach(b=>b.onclick=()=>deleteEvent(b.dataset.delete));
     }
-    const a=$("activateEventBtn"),ar=$("archiveEventBtn"),d=$("deleteEventBtn"),p=$("previewEventBtn");
+    const a=$("activateEventBtn"),ar=$("archiveEventBtn"),d=$("deleteEventBtn"),p=$("previewEventBtn);
     if(a)a.disabled=!currentEvent||currentEvent.status!=="PLANIFICAT";
     if(ar)ar.disabled=!currentEvent||currentEvent.status!=="ACTIV";
     if(d)d.disabled=!currentEvent||currentEvent.status==="ACTIV";

@@ -44,6 +44,7 @@
       location:()=>section("location","location",`<h2 class="section-title">${esc(cfg.location?.title||"Locația evenimentului")}</h2><p style="text-align:center">${esc(cfg.location?.name||cfg.event?.location||"")}</p><div class="map"><iframe src="${attr(cfg.location?.mapUrl||"")}" width="100%" height="460" style="border:0" allowfullscreen loading="lazy"></iframe></div>`)
     };
     app.innerHTML=hero+mods.map(m=>renderers[m.id]?renderers[m.id](): "").join("");
+    window.dispatchEvent(new CustomEvent("site:rendered"));
     nav.innerHTML='<li><a href="#home">Acasă</a></li>'+mods.filter(m=>m.showInMenu!==false&&m.id!=="countdown").map(m=>'<li><a href="#'+(m.id==="features"?"event":(m.id==="participation"?"register":m.id))+'">'+esc(m.id==="features"?(started?cfg.features.menuAfter:cfg.features.menuBefore):(m.id==="food"?cfg.food.title:(m.id==="participation"?"Confirmă participarea":m.label)))+"</a></li>").join("");
     document.title=(cfg.event?.name||"Destindere")+" • "+(cfg.event?.congregation||"");
     document.getElementById("footerText").textContent=cfg.event?.footer||"";

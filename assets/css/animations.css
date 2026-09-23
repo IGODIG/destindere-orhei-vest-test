@@ -33,12 +33,21 @@
 .leaves::before,
 .leaves::after {
   content: "🍂";
-
   position: absolute;
-
   font-size: 2rem;
-
   animation: fall 15s linear infinite;
+}
+
+body.season-spring .leaves::before,
+body.season-spring .leaves::after {
+  content: "🌸";
+  font-size: 1.7rem;
+  animation: springFall 12s ease-in-out infinite;
+}
+
+body.season-spring .leaves::after {
+  animation-duration: 16s;
+  animation-delay: 4s;
 }
 
 .leaves::after {
@@ -46,6 +55,26 @@
 
   animation-duration: 18s;
   animation-delay: 5s;
+}
+
+@keyframes springFall {
+  0% {
+    transform: translate3d(0, -100px, 0) rotate(0deg);
+    opacity: 0;
+    left: 18%;
+  }
+  12% { opacity: 1; }
+  45% {
+    transform: translate3d(18vw, 50vh, 0) rotate(180deg);
+  }
+  75% {
+    transform: translate3d(-8vw, 85vh, 0) rotate(300deg);
+  }
+  100% {
+    transform: translate3d(12vw, 115vh, 0) rotate(420deg);
+    opacity: 0;
+    left: 82%;
+  }
 }
 
 @keyframes fall {

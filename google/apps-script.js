@@ -912,6 +912,16 @@ function eventRecordFromRow(row) {
   var eventConfig = config && config.event ? config.event : {};
   var rawDate = row[3] || eventConfig.date || "";
   var rawTime = row[4] || eventConfig.time || "";
+  var formattedTime = "";
+  if (rawTime instanceof Date && !isNaN(rawTime.getTime())) {
+    formattedTime = Utilities.formatDate(rawTime, Session.getScriptTimeZone(), "HH:mm");
+  } else {
+    var rawTimeText = String(rawTime || "").trim();
+    var timeMatch = rawTimeText.match(/(?:^|\\s)(\\d{1,2}):(\\d{2})(?::\\d{2})?/);
+    formattedTime = timeMatch
+      ? String(timeMatch[1]).padStart(2, "0") + ":" + timeMatch[2]
+      : String(eventConfig.time || "").trim();
+  }
   var rawLocation = row[5] || eventConfig.location || "";
   var rawName = row[1] || eventConfig.name || "";
   var rawCongregation = row[2] || eventConfig.congregation || "";
@@ -938,7 +948,7 @@ function eventRecordFromRow(row) {
     name: String(rawName),
     congregation: String(rawCongregation),
     date: formattedDate,
-    time: String(rawTime),
+    time: formattedTime,
     location: String(rawLocation),
     status: eventEffectiveStatus(row[6], activeFrom, activeUntil),
     storedStatus: String(row[6] || "PLANIFICAT").toUpperCase(),

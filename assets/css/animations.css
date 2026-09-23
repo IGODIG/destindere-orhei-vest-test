@@ -19,7 +19,7 @@
 }
 
 /* ==========================================
-   Frunze
+   Frunze / particule sezoniere
 ========================================== */
 
 .leaves {
@@ -38,111 +38,79 @@
   animation: fall 15s linear infinite;
 }
 
-body.season-spring .leaves::before,
-body.season-spring .leaves::after {
-  content: "🌸";
-  font-size: 1.45rem;
-  animation: springSnow 14s linear infinite;
-}
-
-body.season-spring .leaves::after {
-  animation-duration: 18s;
-  animation-delay: 5s;
-}
-
-body.season-spring .leaves {
-  opacity: 0.8;
-}
-
-body.season-spring .leaves {
-  --spring-flower: "🌸";
-  --spring-flower-alt: "🌼";
-  --spring-leaf: "🍃";
-}
-
-body.season-spring .leaves::before {
-  content: "🌸";
-  animation-duration: 14s;
-}
-
-body.season-spring .leaves::after {
-  content: "🌼";
-  animation-duration: 18s;
-  animation-delay: 5s;
-}
-
-body.season-spring .leaves::before,
-body.season-spring .leaves::after {
-  width: 1.6rem;
-  height: 1.6rem;
-}
-
-body.season-spring .leaves {
-  filter: none;
-}
-
-body.season-spring .leaves:has(+ body) { }
-
-
-body.season-spring .leaves::before {
-  text-shadow:
-    0 0 3px rgba(255,255,255,.7),
-    0 0 8px rgba(255,190,215,.45);
-}
-
-body.season-spring .leaves::after {
-  text-shadow:
-    0 0 3px rgba(255,255,255,.7),
-    0 0 8px rgba(180,225,195,.45);
-}
-
 .leaves::after {
   left: 75%;
-
   animation-duration: 18s;
   animation-delay: 5s;
 }
+
+.spring-particles {
+  display: none;
+}
+
+body.season-spring .spring-particles {
+  display: block;
+  opacity: 0.82;
+}
+
+body.season-spring .spring-particles::before,
+body.season-spring .spring-particles::after {
+  display: none;
+}
+
+body.season-spring .spring-particles span {
+  position: absolute;
+  top: -12vh;
+  left: var(--left);
+  font-size: var(--size);
+  line-height: 1;
+  opacity: 0;
+  filter: drop-shadow(0 2px 5px rgba(120, 150, 130, 0.12));
+  animation: springSnow var(--duration) linear infinite;
+  animation-delay: var(--delay);
+}
+
+body.season-spring .spring-particles span:nth-child(1) { --left: 8%;  --size: 1.35rem; --duration: 10s; --delay: -1s; }
+body.season-spring .spring-particles span:nth-child(2) { --left: 22%; --size: 1.15rem; --duration: 13s; --delay: -6s; }
+body.season-spring .spring-particles span:nth-child(3) { --left: 38%; --size: 1.5rem;  --duration: 11s; --delay: -3s; }
+body.season-spring .spring-particles span:nth-child(4) { --left: 56%; --size: 1.25rem; --duration: 15s; --delay: -9s; }
+body.season-spring .spring-particles span:nth-child(5) { --left: 70%; --size: 1.05rem; --duration: 12s; --delay: -5s; }
+body.season-spring .spring-particles span:nth-child(6) { --left: 84%; --size: 1.2rem;  --duration: 14s; --delay: -10s; }
+body.season-spring .spring-particles span:nth-child(7) { --left: 94%; --size: 1rem;    --duration: 16s; --delay: -7s; }
 
 @keyframes springSnow {
   0% {
-    transform: translate3d(0, -80px, 0) rotate(0deg);
+    transform: translate3d(0, -12vh, 0) rotate(0deg);
     opacity: 0;
-    left: 12%;
   }
-  10% {
-    opacity: .75;
+  8% {
+    opacity: 0.78;
   }
-  35% {
-    transform: translate3d(35px, 35vh, 0) rotate(120deg);
+  28% {
+    transform: translate3d(38px, 28vh, 0) rotate(95deg);
   }
-  65% {
-    transform: translate3d(-25px, 68vh, 0) rotate(240deg);
+  52% {
+    transform: translate3d(-28px, 56vh, 0) rotate(190deg);
+  }
+  76% {
+    transform: translate3d(34px, 82vh, 0) rotate(285deg);
   }
   100% {
-    transform: translate3d(40px, 112vh, 0) rotate(360deg);
+    transform: translate3d(-12px, 115vh, 0) rotate(380deg);
     opacity: 0;
-    left: 82%;
   }
 }
 
 @keyframes fall {
   0% {
     transform: translateY(-120px) rotate(0deg);
-
     opacity: 0;
-
     left: 15%;
   }
-
-  15% {
-    opacity: 1;
-  }
-
+  15% { opacity: 1; }
   100% {
     transform: translateY(120vh) rotate(720deg);
-
     left: 85%;
-
     opacity: 0;
   }
 }

@@ -87,6 +87,11 @@ async function activateEventCentral(eventId,activeFrom,activeUntil,userId){
   const d=await apiPost({action:"activateEvent",eventId,activeFrom:activeFrom||"",activeUntil:activeUntil||"",updatedBy:userId||""});
   return d.event;
 }
+async function archiveEventCentral(eventId,userId){
+  const d=await apiPost({action:"archiveEvent",eventId,updatedBy:userId||""});
+  return d.event;
+}
+
 async function deleteEventCentral(eventId,userId){
   return apiPost({action:"deleteEvent",eventId,updatedBy:userId||""});
 }

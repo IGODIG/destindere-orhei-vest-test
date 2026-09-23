@@ -699,18 +699,18 @@ function uploadMemory(data) {
       "1UrOCtN2ixkyoykDeaV43UakTHbn8DiKE";
 
 
-    var folder =
-      DriveApp.getFolderById(
-        FOLDER_ID
-      );
+    var eventId = cleanValue(getValue(data, ["eventId"]));
+    if (!eventId) throw new Error("ID-ul evenimentului lipsește.");
 
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var found = findEventRow(ss, eventId);
+    if (!found) throw new Error("Evenimentul nu a fost găsit.");
 
-    if (!folder) {
+    var rootFolder = DriveApp.getFolderById(FOLDER_ID);
+    if (!rootFolder) throw new Error("Folderul Google Drive nu a fost găsit.");
 
-      throw new Error(
-        "Folderul Google Drive nu a fost găsit."
-      );
-    }
+    var folders = rootFolder.getFoldersByName(eventId);
+    var folder = folders.hasNext() ? folders.next() : rootFolder.createFolder(eventId);
 
 
     // ======================================================

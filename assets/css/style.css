@@ -549,6 +549,27 @@ nav a.active::after {
   box-shadow: 0 15px 35px rgba(217, 119, 6, 0.35);
 }
 
+.hero-participation-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 28px;
+  padding: 15px 30px;
+  border-radius: 50px;
+  color: #fff;
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 600;
+  background: linear-gradient(135deg, var(--primary), var(--gold));
+  box-shadow: 0 10px 28px rgba(0,0,0,.22);
+  transition: var(--transition);
+}
+
+.hero-participation-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 35px rgba(0,0,0,.28);
+}
+
 /* ==========================================================
    STATISTICS
 ========================================================== */

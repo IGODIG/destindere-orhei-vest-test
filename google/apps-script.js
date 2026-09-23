@@ -893,15 +893,41 @@ function eventEffectiveStatus(status, activeFrom, activeUntil) {
 function eventRecordFromRow(row) {
   var config = {};
   try { config = row[9] ? JSON.parse(String(row[9])) : {}; } catch (e) { config = {}; }
+
+  // Coloanele metadata rămân sursa principală, dar pentru compatibilitate
+  // cu evenimentele create/salvate înainte de centralizarea metadata folosim
+  // și config.event ca fallback. Astfel lista de evenimente nu mai pierde data.
+  var eventConfig = config && config.event ? config.event : {};
+  var rawDate = row[3] || eventConfig.date || "";
+  var rawTime = row[4] || eventConfig.time || "";
+  var rawLocation = row[5] || eventConfig.location || "";
+  var rawName = row[1] || eventConfig.name || "";
+  var rawCongregation = row[2] || eventConfig.congregation || "";
+
   var activeFrom = row[7] ? new Date(row[7]) : null;
   var activeUntil = row[8] ? new Date(row[8]) : null;
+
+  var formattedDate = "";
+  if (rawDate) {
+    var dateObject = new Date(rawDate);
+    if (!isNaN(dateObject.getTime())) {
+      formattedDate = Utilities.formatDate(
+        dateObject,
+        Session.getScriptTimeZone(),
+        "yyyy-MM-dd"
+      );
+    } else {
+      formattedDate = String(rawDate).trim();
+    }
+  }
+
   return {
     id: String(row[0] || ""),
-    name: String(row[1] || ""),
-    congregation: String(row[2] || ""),
-    date: row[3] ? Utilities.formatDate(new Date(row[3]), Session.getScriptTimeZone(), "yyyy-MM-dd") : "",
-    time: String(row[4] || ""),
-    location: String(row[5] || ""),
+    name: String(rawName),
+    congregation: String(rawCongregation),
+    date: formattedDate,
+    time: String(rawTime),
+    location: String(rawLocation),
     status: eventEffectiveStatus(row[6], activeFrom, activeUntil),
     storedStatus: String(row[6] || "PLANIFICAT").toUpperCase(),
     activeFrom: activeFrom && !isNaN(activeFrom.getTime()) ? activeFrom.toISOString() : "",

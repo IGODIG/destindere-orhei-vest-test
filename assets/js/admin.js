@@ -93,10 +93,6 @@
         const m=getModule(status.dataset.statusFor);
         if(!m)return;
         m.enabled=!m.enabled;
-        if(m.id==="food"){
-          if(m.enabled){cfg.food.manualAfterAutoDisable=true;cfg.food.autoDisabled=false}
-          else {cfg.food.manualAfterAutoDisable=false;cfg.food.autoDisabled=false}
-        }
         syncLegacyEnabled();
         syncPanelHeaders();
       });
@@ -293,7 +289,11 @@
     cfg.participation.fields={name:$("fieldName")?.checked||false,participation:$("fieldParticipation")?.checked||false,persons:$("fieldPersons")?.checked||false,products:$("fieldProducts")?.checked||false,notes:$("fieldNotes")?.checked||false};
     cfg.stats=cfg.stats||{};cfg.stats.title=$("statsTitle")?.value||"";cfg.stats.afterStart=$("statsAfterStart")?.value||"hide";
     cfg.food=cfg.food||{};cfg.food.title=$("foodTitle")?.value||"";cfg.food.description=$("foodDescription")?.value||"";cfg.food.autoDisableHoursAfterStart=24;
-    const foodModule=getModule("food");if(foodModule)foodModule.label=cfg.food.title||META.food[1];
+    document.querySelectorAll(".module-label-input").forEach(input=>{
+      const id=input.dataset.labelFor;
+      const m=getModule(id);
+      if(m)m.label=input.value.trim()||META[id][1];
+    });
     syncLegacyEnabled();
   }
 

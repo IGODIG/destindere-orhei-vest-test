@@ -109,23 +109,36 @@ const hero= '<section class="hero" id="home"'+heroStyle+'><div class="container"
             const timeMatch=String(rawTime).match(/(?:^|\s)(\d{1,2}):(\d{2})(?::\d{2})?/);
             const time=timeMatch ? String(timeMatch[1]).padStart(2,"0")+":"+timeMatch[2] : String(rawTime);
             const location=next.location||next.config?.event?.location||"";
+            let plannedConfig={};
+            try {
+              const plannedResponse=await apiGet({type:"event",eventId:next.id});
+              plannedConfig=normalizeConfig(plannedResponse.event?.config||{});
+            } catch (plannedError) {
+              console.warn("Nu s-a putut încărca configurația evenimentului planificat:",plannedError);
+            }
+            const heroImage=String(plannedConfig.event?.heroImage||"").trim();
+            const heroStyle=heroImage
+              ? ' style="background-image:linear-gradient(rgba(20,20,20,.42),rgba(20,20,20,.42)),url(\\''+attr(heroImage)+'\\')"'
+              : "";
             window.CONFIG=normalizeConfig({
+              ...plannedConfig,
               event:{
+                ...(plannedConfig.event||{}),
                 name:eventName,
                 congregation:congregation,
                 date:dateValue,
                 time:time,
                 location:location,
-                footer:next.config?.event?.footer||""
+                footer:plannedConfig.event?.footer||next.config?.event?.footer||""
               },
               modules:[]
             });
             document.title=eventName+" • "+congregation;
-            document.getElementById("footerText").textContent=next.config?.event?.footer||"";
+            document.getElementById("footerText").textContent=window.CONFIG.event.footer||"";
             applySeasonTheme(window.CONFIG);
             document.getElementById("navLogo").textContent="🌸 "+String(congregation).replace("Congregația ","");
             nav.innerHTML='<li><a href="#home">Acasă</a></li>';
-            app.innerHTML='<section class="hero planned-event" id="home"><div class="container"><p class="hero-bible-ref">URMĂTORUL EVENIMENT</p><h2>'+esc(eventName)+'</h2><h1>În curând</h1><p class="planned-event-date">📅 '+esc(date)+(time?' &nbsp; 🕐 '+esc(time):"")+'</p>'+(location?'<p class="planned-event-location">📍 '+esc(location)+'</p>':"")+'<p class="planned-event-message">Evenimentul va fi disponibil în curând.</p></div></section>';
+            app.innerHTML='<section class="hero planned-event" id="home"'+heroStyle+'><div class="container"><p class="hero-bible-ref">URMĂTORUL EVENIMENT</p><h2>'+esc(eventName)+'</h2><h1>În curând</h1><p class="planned-event-date">📅 '+esc(date)+(time?' &nbsp; 🕐 '+esc(time):"")+'</p>'+(location?'<p class="planned-event-location">📍 '+esc(location)+'</p>':"")+'<p class="planned-event-message">Evenimentul va fi disponibil în curând.</p></div></section>';
             return;
           }
         }

@@ -1089,7 +1089,9 @@ function createEvent(ss, data) {
     config.event.name = name; config.event.congregation = congregation; config.event.date = date; config.event.time = time; config.event.location = location;
     config.event.eventId = id;
     var now = new Date();
-    sheet.appendRow([id,name,congregation,date,time,location,"PLANIFICAT",activeFrom,activeUntil,JSON.stringify(config),1,now,now,userId]);
+    // Un eveniment nou este întotdeauna PLANIFICAT.
+    // Datele de activare nu se copiază ca stare operațională din alt eveniment.
+    sheet.appendRow([id,name,congregation,date,time,location,"PLANIFICAT","", "",JSON.stringify(config),1,now,now,userId]);
     return jsonOutput({success:true,event:eventRecordFromRow(sheet.getRange(sheet.getLastRow(),1,1,14).getValues()[0])});
   } catch (error) { return jsonOutput({success:false,message:error.toString()}); }
 }
@@ -1127,9 +1129,32 @@ function saveEvent(ss, data) {
           throw new Error("„Activ până la” trebuie să fie după „Activ din”.");
         }
       }
+    } else {
+      // PLANIFICAT și ARHIVAT nu păstrează interval de activare.
+      activeFrom = "";
+      activeUntil = "";
     }
     config.event = config.event || {};
     config.event.eventId = eventId; config.event.name=name; config.event.congregation=congregation; config.event.date=date; config.event.time=time; config.event.location=location;
+
+    // Invarianta sistemului: există cel mult un singur eveniment ACTIV.
+    // Dacă salvarea setează direct un eveniment ca ACTIV, toate celelalte ACTIV devin ARHIVAT.
+    if (status === "ACTIV") {
+      var allEvents = getEventRows(ss);
+      allEvents.forEach(function(e) {
+        if (e.id === eventId || e.status !== "ACTIV") return;
+        var other = findEventRow(ss, e.id);
+        if (!other) return;
+        var otherRow = other.row.slice();
+        otherRow[6] = "ARHIVAT";
+        otherRow[7] = "";
+        otherRow[8] = "";
+        otherRow[12] = new Date();
+        otherRow[13] = userId;
+        other.sheet.getRange(other.rowNumber,1,1,14).setValues([otherRow]);
+      });
+    }
+
     var version = Number(old.version || 0) + 1; var now = new Date();
     found.sheet.getRange(found.rowNumber,1,1,14).setValues([[eventId,name,congregation,date,time,location,status,activeFrom,activeUntil,JSON.stringify(config),version,found.row[11]||now,now,userId]]);
     SpreadsheetApp.flush();
@@ -1194,7 +1219,11 @@ function archiveEvent(ss, data) {
     var eventId = cleanValue(getValue(data,["eventId"]));
     var found = findEventRow(ss,eventId);
     if (!found) throw new Error("Evenimentul nu a fost găsit.");
-    found.row[6] = "ARHIVAT"; found.row[12] = new Date(); found.row[13] = userId;
+    found.row[6] = "ARHIVAT";
+    found.row[7] = "";
+    found.row[8] = "";
+    found.row[12] = new Date();
+    found.row[13] = userId;
     found.sheet.getRange(found.rowNumber,1,1,14).setValues([found.row]);
     return getEventResponse(ss,eventId);
   } catch (error) { return jsonOutput({success:false,message:error.toString()}); }

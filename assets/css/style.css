@@ -407,22 +407,6 @@ nav a.active::after {
   letter-spacing: .01em;
 }
 
-body.season-spring .planned-event .container {
-  border-color: rgba(255,255,255,.38);
-  background:
-    linear-gradient(145deg, rgba(255,255,255,.20), rgba(248,235,243,.10));
-  box-shadow:
-    0 30px 80px rgba(74, 104, 84, .24),
-    inset 0 1px 0 rgba(255,255,255,.30);
-}
-
-body.season-spring .planned-event h1 {
-  background: linear-gradient(90deg, #ffffff 5%, #f8d9e7 48%, #dff4e6 95%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
 @media (max-width: 640px) {
   .planned-event .container {
     width: min(100% - 22px, 900px);

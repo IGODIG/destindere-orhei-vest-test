@@ -107,7 +107,7 @@ const hero= '<section class="hero" id="home"'+heroStyle+'><div class="container"
             const date=formatDate(dateValue);
             const rawTime=next.time||next.config?.event?.time||"";
             const timeMatch=String(rawTime).match(/(?:^|\s)(\d{1,2}):(\d{2})(?::\d{2})?/);
-            const time=timeMatch ? pad(timeMatch[1])+":"+timeMatch[2] : String(rawTime);
+            const time=timeMatch ? String(timeMatch[1]).padStart(2,"0")+":"+timeMatch[2] : String(rawTime);
             const location=next.location||next.config?.event?.location||"";
             window.CONFIG=normalizeConfig({
               event:{

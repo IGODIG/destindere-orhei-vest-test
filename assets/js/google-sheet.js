@@ -104,28 +104,13 @@ document.addEventListener("DOMContentLoaded", function () {
       if (complete) {
         if (label) label.textContent = "COMPLET";
         item.classList.add("is-complete");
-        // După începerea evenimentului afișăm doar necesarul care încă nu este complet.
-        if (typeof CONFIG !== "undefined") {
-          const eventTime = new Date(`${CONFIG.event.date}T${CONFIG.event.time || "00:00"}:00`).getTime();
-          if (Date.now() >= eventTime) item.hidden = true;
-        }
+        item.hidden = CONFIG.food?.hideCompleted === true;
       } else {
         if (label) label.textContent = "PROGRES";
         item.classList.remove("is-complete");
         item.hidden = false;
       }
 
-      const foodSection = document.getElementById("food");
-      if (foodSection && typeof CONFIG !== "undefined") {
-        const eventTime = new Date(`${CONFIG.event.date}T${CONFIG.event.time || "00:00"}:00`).getTime();
-        if (Date.now() >= eventTime) {
-          const remaining = document.querySelectorAll("#foodProgress .food-card:not([hidden])");
-          const hasRemaining = remaining.length > 0;
-          foodSection.hidden = !hasRemaining;
-          const foodNav = document.querySelector('#mainNav a[href="#food"]');
-          if (foodNav) foodNav.closest("li").hidden = !hasRemaining;
-        }
-      }
     });
   }
 
@@ -215,7 +200,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // PRODUSE
         // ==========================================
 
-        updateFoodProgress(data.produse);
+        updateFoodProgress(getProductsData(data));
       })
 
       .catch(function (error) {

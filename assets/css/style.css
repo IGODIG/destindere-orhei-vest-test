@@ -985,10 +985,10 @@ body.theme-spring{
   --accent:#d99bb8;--hero-overlay:linear-gradient(120deg,rgba(47,133,90,.30),rgba(246,196,83,.16));
 }
 body.theme-summer{
-  --primary:#0ea5a8;--primary-dark:#087f83;--secondary:#126782;--gold:#facc15;
-  --page-bg:#effbfc;--section-bg:#f4fbfc;--surface:#ffffff;--surface-soft:rgba(255,255,255,.88);
-  --muted:#58717a;--footer-bg:linear-gradient(135deg,#075985,#0f766e);--footer-text:#ffffff;
-  --accent:#38bdf8;--hero-overlay:linear-gradient(120deg,rgba(8,127,131,.30),rgba(250,204,21,.16));
+  --primary:#00a8a8;--primary-dark:#007f86;--secondary:#075985;--gold:#ffd43b;
+  --page-bg:#fffdf3;--section-bg:#f4fcff;--surface:#ffffff;--surface-soft:rgba(255,255,255,.90);
+  --muted:#55717a;--footer-bg:linear-gradient(135deg,#007c91,#00a896);--footer-text:#ffffff;
+  --accent:#ffcf33;--hero-overlay:linear-gradient(120deg,rgba(0,168,168,.28),rgba(255,207,51,.20));
 }
 body.theme-autumn{
   --primary:#d97706;--primary-dark:#b45309;--secondary:#8b4513;--gold:#fbbf24;
@@ -997,10 +997,10 @@ body.theme-autumn{
   --accent:#b85c38;--hero-overlay:linear-gradient(120deg,rgba(96,56,19,.34),rgba(217,119,6,.14));
 }
 body.theme-winter{
-  --primary:#3b82c4;--primary-dark:#245f96;--secondary:#244b73;--gold:#dbeafe;
-  --page-bg:#f1f6fb;--section-bg:#f6f9fc;--surface:#ffffff;--surface-soft:rgba(255,255,255,.90);
-  --muted:#607286;--footer-bg:linear-gradient(135deg,#102a43,#1e4b72);--footer-text:#ffffff;
-  --accent:#bfdbfe;--hero-overlay:linear-gradient(120deg,rgba(16,42,67,.42),rgba(59,130,196,.18));
+  --primary:#2563eb;--primary-dark:#1e3a8a;--secondary:#172554;--gold:#e0f2fe;
+  --page-bg:#eef6ff;--section-bg:#f7fbff;--surface:#ffffff;--surface-soft:rgba(255,255,255,.92);
+  --muted:#5f7187;--footer-bg:linear-gradient(135deg,#0b1f3a,#173f6b);--footer-text:#ffffff;
+  --accent:#93c5fd;--hero-overlay:linear-gradient(120deg,rgba(11,31,58,.48),rgba(37,99,235,.18));
 }
 
 body.theme-spring .features,body.theme-summer .features,body.theme-autumn .features,body.theme-winter .features{background:var(--section-bg)}

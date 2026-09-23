@@ -280,7 +280,18 @@
     const requestedToken=++selectionToken;
     const loaded=(await fetchEvents()).map(normalizeEventClient);
     if(requestedToken!==selectionToken)return;
-    events=loaded;
+    // Lista centrală nu include ConfigJSON complet. Încărcăm configurația fiecărui eveniment
+    // pentru ca ora afișată în listă să fie aceeași cu ora folosită de pagina publică.
+    const detailed=await Promise.all(loaded.map(async function(event){
+      try{
+        const full=normalizeEventClient(await fetchEvent(event.id));
+        return {...event,...full,config:full?.config||event.config||{}};
+      }catch(error){
+        return event;
+      }
+    }));
+    if(requestedToken!==selectionToken)return;
+    events=detailed;
     currentEvent=currentEvent&&events.some(e=>e.id===currentEvent.id)?events.find(e=>e.id===currentEvent.id):(events.find(e=>e.status==="ACTIV")||events[0]||null);
     renderEvents();
     if(!events.length){currentEvent=null;renderEvents();return}

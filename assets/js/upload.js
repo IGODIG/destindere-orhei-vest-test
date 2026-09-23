@@ -159,6 +159,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const formData = new URLSearchParams();
 
         formData.append("action", "uploadMemory");
+        formData.append("eventId", CONFIG?.event?.eventId || "");
 
         formData.append("fileName", file.name);
 

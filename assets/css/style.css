@@ -54,6 +54,54 @@ body {
   --max-width: 1200px;
 }
 
+
+
+/* ==========================================================
+   TEMĂ DE PRIMĂVARĂ
+   Activată automat pentru evenimentele cu „PRIMĂVARĂ”.
+========================================================== */
+
+body.season-spring {
+  --primary: #49a96b;
+  --primary-dark: #2f855a;
+  --secondary: #2f6f4e;
+  --gold: #f6c453;
+  --cream: #fffdf5;
+  --border: rgba(255, 255, 255, 0.35);
+  --glass: rgba(255, 255, 255, 0.22);
+}
+
+body.season-spring {
+  background: #f5fbf4;
+}
+
+body.season-spring .features {
+  background: #f5fbf4;
+}
+
+body.season-spring .register {
+  background: linear-gradient(to bottom, #fffef8, #eef8ef);
+}
+
+body.season-spring .hero::before {
+  background: linear-gradient(
+    120deg,
+    rgba(73, 169, 107, 0.20),
+    rgba(246, 196, 83, 0.16),
+    rgba(255, 255, 255, 0.04)
+  );
+}
+
+body.season-spring .section-title::after {
+  background: linear-gradient(to right, var(--primary), var(--gold));
+}
+
+body.season-spring .logo,
+body.season-spring .section-title,
+body.season-spring .feature-card h3 {
+  color: var(--secondary);
+}
+
 /* ==========================================================
    GLOBAL
 ========================================================== */

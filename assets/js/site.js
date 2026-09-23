@@ -59,8 +59,40 @@
     try{
       if(!eventId){
         const d=await apiGet({type:"events"});
-        const active=(d.events||[]).find(e=>e.status==="ACTIV");
-        eventId=active?.id;
+        const events=d.events||[];
+        const active=events.find(e=>e.status==="ACTIV");
+        if(active){
+          eventId=active.id;
+        }else{
+          const planned=events
+            .filter(e=>e.status==="PLANIFICAT")
+            .sort((a,b)=>{
+              const da=new Date((a.date||"")+"T"+(a.time||"00:00")).getTime();
+              const db=new Date((b.date||"")+"T"+(b.time||"00:00")).getTime();
+              return da-db;
+            });
+          const next=planned.find(e=>{
+            const t=new Date((e.date||"")+"T"+(e.time||"00:00")).getTime();
+            return !Number.isNaN(t) && t>=Date.now();
+          }) || planned[0];
+          if(next){
+            const eventName=next.name||"Următorul eveniment";
+            const congregation=next.congregation||"Congregația Orhei-Vest";
+            const date=formatDate(next.date);
+            const time=next.time||"";
+            const location=next.location||"";
+            window.CONFIG=normalizeConfig({
+              event:{name:eventName,congregation:congregation,date:next.date||"",time:time,location:location},
+              modules:[]
+            });
+            document.title=eventName+" • "+congregation;
+            document.getElementById("footerText").textContent="";
+            document.getElementById("navLogo").textContent="🍂 "+String(congregation).replace("Congregația ","");
+            nav.innerHTML='<li><a href="#home">Acasă</a></li>';
+            app.innerHTML='<section class="hero planned-event" id="home"><div class="container"><p class="hero-bible-ref">URMĂTORUL EVENIMENT</p><h2>'+esc(eventName)+'</h2><h1>În curând</h1><p class="planned-event-date">📅 '+esc(date)+(time?' &nbsp; 🕐 '+esc(time):"")+'</p>'+(location?'<p class="planned-event-location">📍 '+esc(location)+'</p>':"")+'<p class="planned-event-message">Evenimentul va fi disponibil în curând.</p></div></section>';
+            return;
+          }
+        }
       }
       if(eventId){
         const d=await apiGet({type:"event",eventId});

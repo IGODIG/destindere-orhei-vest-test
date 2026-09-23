@@ -56,7 +56,7 @@
     try{
       if(!eventId){
         const d=await apiGet({type:"events"});
-        const active=(d.events||[]).find(e=>e.status==="ACTIV")||(d.events||[])[0];
+        const active=(d.events||[]).find(e=>e.status==="ACTIV");
         eventId=active?.id;
       }
       if(eventId){
@@ -67,8 +67,12 @@
         return;
       }
     }catch(e){console.error("Nu s-a putut încărca evenimentul:",e)}
-    window.CONFIG=normalizeConfig({});
-    render(window.CONFIG);
+    const empty=normalizeConfig({
+      event:{name:"Niciun eveniment activ",congregation:"Congregația Orhei-Vest"},
+      modules:[]
+    });
+    window.CONFIG=empty;
+    app.innerHTML='<section class="hero" id="home"><div class="container"><h1>Niciun eveniment activ</h1><p class="hero-bible-ref">Evenimentele planificate și arhivate nu sunt afișate public.</p></div></section>';
   }
   load();
 })();

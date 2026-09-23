@@ -62,7 +62,21 @@ async function apiPost(data) {
 async function fetchEvents(){ return (await apiGet({type:"events"})).events || []; }
 async function fetchEvent(id){ return (await apiGet({type:"event",eventId:id})).event; }
 async function saveEventCentral(event,userId){
-  const d=await apiPost({action:"saveEvent",eventId:event.id,config:event.config,status:event.status,activeFrom:event.activeFrom||"",activeUntil:event.activeUntil||"",updatedBy:userId||""});
+  const ev=event.config?.event||{};
+  const d=await apiPost({
+    action:"saveEvent",
+    eventId:event.id,
+    config:event.config,
+    status:event.status,
+    activeFrom:event.activeFrom||"",
+    activeUntil:event.activeUntil||"",
+    name:ev.name||"",
+    congregation:ev.congregation||"",
+    date:ev.date||"",
+    time:ev.time||"",
+    location:ev.location||"",
+    updatedBy:userId||""
+  });
   return d.event;
 }
 async function createEventCentral(sourceEventId,userId){

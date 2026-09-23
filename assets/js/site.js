@@ -100,11 +100,6 @@ const hero= '<section class="hero" id="home"'+heroStyle+'><div class="container"
             const t=new Date(date+"T"+time).getTime();
             return !Number.isNaN(t) && t>=Date.now();
           }) || planned[0];
-
-          // Un eveniment PLANIFICAT trebuie afișat chiar dacă ora primită
-          // din Sheets nu poate fi parsată ca dată JavaScript.
-          // Sortarea/filtrarea după timp este doar pentru alegerea următorului,
-          // nu trebuie să ascundă complet evenimentul.
           if(next){
             const eventName=next.name||next.config?.event?.name||"Următorul eveniment";
             const congregation=next.congregation||next.config?.event?.congregation||"Congregația Orhei-Vest";
@@ -123,7 +118,7 @@ const hero= '<section class="hero" id="home"'+heroStyle+'><div class="container"
             }
             const heroImage=String(plannedConfig.event?.heroImage||"").trim();
             const heroStyle=heroImage
-              ? ' style="background-image:linear-gradient(rgba(20,20,20,.42),rgba(20,20,20,.42)),url(&quot;'+attr(heroImage)+'&quot;)"'
+              ? ' style="background-image:linear-gradient(rgba(20,20,20,.42),rgba(20,20,20,.42)),url(\\''+attr(heroImage)+'\\')"'
               : "";
             window.CONFIG=normalizeConfig({
               ...plannedConfig,

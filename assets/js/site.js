@@ -11,10 +11,12 @@
     if(!m||!m.enabled)return false;
     const started=eventStarted(cfg);
     if(id==="countdown"&&started&&cfg.countdown?.hideAfterStart)return false;
-    if(id==="stats"&&started)return false;
+    if(id==="stats"&&started&&(cfg.stats?.afterStart||"hide")==="hide")return false;
     if(id==="participation"){
       const mode=cfg.participation?.visibility||"untilEvent";
-      if(mode==="alwaysOff"||(mode==="untilEvent"&&started))return false;
+      const afterStart=cfg.participation?.afterStart||"hide";
+      if(mode==="alwaysOff")return false;
+      if(started&&(mode==="untilEvent"||afterStart==="hide"))return false;
     }
     if(id==="food"){
       const cutoff=new Date((cfg.event?.date||"")+"T"+(cfg.event?.time||"00:00")+":00").getTime()+Number(cfg.food?.autoDisableHoursAfterStart||24)*3600000;
@@ -86,7 +88,7 @@
               modules:[]
             });
             document.title=eventName+" • "+congregation;
-            document.getElementById("footerText").textContent="";
+            document.getElementById("footerText").textContent=next.config?.event?.footer||"";
             document.getElementById("navLogo").textContent="🍂 "+String(congregation).replace("Congregația ","");
             nav.innerHTML='<li><a href="#home">Acasă</a></li>';
             app.innerHTML='<section class="hero planned-event" id="home"><div class="container"><p class="hero-bible-ref">URMĂTORUL EVENIMENT</p><h2>'+esc(eventName)+'</h2><h1>În curând</h1><p class="planned-event-date">📅 '+esc(date)+(time?' &nbsp; 🕐 '+esc(time):"")+'</p>'+(location?'<p class="planned-event-location">📍 '+esc(location)+'</p>':"")+'<p class="planned-event-message">Evenimentul va fi disponibil în curând.</p></div></section>';

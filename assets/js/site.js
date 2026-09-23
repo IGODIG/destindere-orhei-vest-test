@@ -51,8 +51,16 @@ const hero= '<section class="hero" id="home"'+heroStyle+'><div class="container"
     nav.innerHTML='<li><a href="#home">Acasă</a></li>'+mods.filter(m=>m.showInMenu!==false&&m.id!=="countdown").map(m=>'<li><a href="#'+(m.id==="features"?"event":(m.id==="participation"?"register":m.id))+'">'+esc(m.id==="features"?(started?cfg.features.menuAfter:cfg.features.menuBefore):(m.id==="food"?cfg.food.title:(m.id==="participation"?"Confirmă participarea":m.label)))+"</a></li>").join("");
     document.title=(cfg.event?.name||"Destindere")+" • "+(cfg.event?.congregation||"");
     document.getElementById("footerText").textContent=cfg.event?.footer||"";
-    document.getElementById("navLogo").textContent="🍂 "+String(cfg.event?.congregation||"Orhei-Vest").replace("Congregația ","");
+    applySeasonTheme(cfg);
+    document.getElementById("navLogo").textContent=(document.body.classList.contains("season-spring")?"🌸 ":"🍂 ")+String(cfg.event?.congregation||"Orhei-Vest").replace("Congregația ","");
     startCountdownIfNeeded(cfg);
+  }
+
+  function applySeasonTheme(cfg){
+    const name=String(cfg.event?.name||"").toUpperCase();
+    const isSpring=name.includes("PRIMAVAR") || name.includes("PRIMĂVAR");
+    document.body.classList.toggle("season-spring",isSpring);
+    document.body.classList.toggle("season-autumn",!isSpring);
   }
 
   function startCountdownIfNeeded(cfg){
@@ -113,7 +121,8 @@ const hero= '<section class="hero" id="home"'+heroStyle+'><div class="container"
             });
             document.title=eventName+" • "+congregation;
             document.getElementById("footerText").textContent=next.config?.event?.footer||"";
-            document.getElementById("navLogo").textContent="🍂 "+String(congregation).replace("Congregația ","");
+            applySeasonTheme(window.CONFIG);
+            document.getElementById("navLogo").textContent="🌸 "+String(congregation).replace("Congregația ","");
             nav.innerHTML='<li><a href="#home">Acasă</a></li>';
             app.innerHTML='<section class="hero planned-event" id="home"><div class="container"><p class="hero-bible-ref">URMĂTORUL EVENIMENT</p><h2>'+esc(eventName)+'</h2><h1>În curând</h1><p class="planned-event-date">📅 '+esc(date)+(time?' &nbsp; 🕐 '+esc(time):"")+'</p>'+(location?'<p class="planned-event-location">📍 '+esc(location)+'</p>':"")+'<p class="planned-event-message">Evenimentul va fi disponibil în curând.</p></div></section>';
             return;

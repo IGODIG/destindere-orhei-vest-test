@@ -887,6 +887,46 @@ body.season-spring .register {
   background: linear-gradient(180deg, #fffafd 0%, #f0f8f2 100%);
 }
 
+body.season-spring .register form {
+  background: linear-gradient(145deg, rgba(255,255,255,.92), rgba(245,251,247,.96));
+  border: 1px solid rgba(117, 184, 137, .20);
+  box-shadow: 0 20px 50px rgba(86, 128, 101, .12);
+}
+
+body.season-spring .register input,
+body.season-spring .register select,
+body.season-spring .register textarea {
+  background: #fffefe;
+  border-color: rgba(117, 184, 137, .14);
+}
+
+body.season-spring .register input:focus,
+body.season-spring .register select:focus,
+body.season-spring .register textarea:focus {
+  border-color: #75b889;
+  box-shadow: 0 0 0 5px rgba(117, 184, 137, .14);
+}
+
+body.season-spring .register .product-row {
+  background: linear-gradient(135deg, rgba(239,248,242,.85), rgba(253,243,248,.75));
+  border-radius: 16px;
+  padding: 10px;
+  border: 1px solid rgba(117, 184, 137, .12);
+}
+
+body.season-spring .register strong {
+  color: #47775b;
+}
+
+body.season-spring .register button {
+  background: linear-gradient(135deg, #65ad7d, #d99bb8);
+  box-shadow: 0 12px 30px rgba(101, 173, 125, .22);
+}
+
+body.season-spring .register button:hover {
+  box-shadow: 0 18px 35px rgba(101, 173, 125, .30);
+}
+
 body.season-spring footer {
   background: linear-gradient(135deg, #dff1e5 0%, #f7e8f1 100%);
   color: #496052;

@@ -316,11 +316,22 @@
   }
   async function selectEvent(id){
     const token=++selectionToken;
+    const wanted=String(id||"").trim();
 
-    // /events returnează deja configurația completă pentru fiecare eveniment.
-    // Nu mai facem un al doilea request /event, care poate eșua chiar dacă
-    // lista centrală a fost încărcată corect.
-    const source=events.find(e=>String(e.id||"").trim()===String(id||"").trim());
+    // Dacă lista locală încă nu a fost populată, o încărcăm înainte de selecție.
+    if(!events.length){
+      events=(await fetchEvents()).map(normalizeEventClient);
+    }
+
+    // /events este sursa centrală și conține configurația completă.
+    let source=events.find(e=>String(e.id||"").trim()===wanted);
+
+    // Pentru siguranță, dacă evenimentul nu a fost găsit în memoria locală,
+    // reîmprospătăm lista o singură dată înainte să raportăm eroarea.
+    if(!source){
+      events=(await fetchEvents()).map(normalizeEventClient);
+      source=events.find(e=>String(e.id||"").trim()===wanted);
+    }
 
     if(!source){
       throw new Error("Evenimentul nu a fost găsit în lista încărcată.");
@@ -347,7 +358,14 @@
     // Folosim direct datele primite din Sheets și evităm request-uri suplimentare pentru fiecare rând.
     if(requestedToken!==selectionToken)return;
     events=loaded;
-    currentEvent=currentEvent&&events.some(e=>e.id===currentEvent.id)?events.find(e=>e.id===currentEvent.id):(events.find(e=>e.status==="ACTIV")||events[0]||null);
+    // Evenimentul ACTIV este întotdeauna selecția implicită.
+    // Doar dacă nu există niciun ACTIV păstrăm selecția curentă sau primul eveniment.
+    const activeEvent=events.find(e=>String(e.status||"").toUpperCase()==="ACTIV");
+    currentEvent=activeEvent||(
+      currentEvent&&events.some(e=>e.id===currentEvent.id)
+        ? events.find(e=>e.id===currentEvent.id)
+        : (events[0]||null)
+    );
     renderEvents();
     if(!events.length){currentEvent=null;renderEvents();return}
     const id=currentEvent.id;

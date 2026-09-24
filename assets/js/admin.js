@@ -316,9 +316,24 @@
   }
   async function selectEvent(id){
     const token=++selectionToken;
-    const ev=normalizeEventClient(await fetchEvent(id));
+
+    // /events returnează deja configurația completă pentru fiecare eveniment.
+    // Nu mai facem un al doilea request /event, care poate eșua chiar dacă
+    // lista centrală a fost încărcată corect.
+    const source=events.find(e=>String(e.id||"").trim()===String(id||"").trim());
+
+    if(!source){
+      throw new Error("Evenimentul nu a fost găsit în lista încărcată.");
+    }
+
+    const ev=normalizeEventClient(source);
     if(token!==selectionToken)return;
-    currentEvent=ev;cfg=normalizeConfig(ev.config||{});ensureConfigShape();renderEditor();renderEvents();
+
+    currentEvent=ev;
+    cfg=normalizeConfig(ev.config||{});
+    ensureConfigShape();
+    renderEditor();
+    renderEvents();
   }
   async function previewEvent(id=currentEvent?.id){
     if(!id)return;

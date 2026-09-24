@@ -217,7 +217,7 @@
         const id=esc(e.id||"");
         const name=esc(e.name||"Eveniment fără nume");
         const status=esc(e.status||"PLANIFICAT");
-        return "<option value=\\\""+id+"\\\">"+name+" • "+status+"</option>";
+        return "<option value=\""+id+"\">"+name+" • "+status+"</option>";
       }).join("");
       selector.value=currentEvent?.id||"";
     }

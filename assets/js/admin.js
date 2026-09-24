@@ -318,23 +318,25 @@
     const token=++selectionToken;
     const wanted=String(id||"").trim();
 
-    // Dacă lista locală încă nu a fost populată, o încărcăm înainte de selecție.
-    if(!events.length){
-      events=(await fetchEvents()).map(normalizeEventClient);
-    }
+    if(!wanted)return;
 
-    // /events este sursa centrală și conține configurația completă.
+    // Lista /events este sursa de adevăr și conține configurația completă.
+    // Selectăm strict după ID, apoi încărcăm configurația acelui eveniment.
     let source=events.find(e=>String(e.id||"").trim()===wanted);
 
-    // Pentru siguranță, dacă evenimentul nu a fost găsit în memoria locală,
-    // reîmprospătăm lista o singură dată înainte să raportăm eroarea.
     if(!source){
-      events=(await fetchEvents()).map(normalizeEventClient);
-      source=events.find(e=>String(e.id||"").trim()===wanted);
+      try{
+        const fresh=(await fetchEvents()).map(normalizeEventClient);
+        events=fresh;
+        source=events.find(e=>String(e.id||"").trim()===wanted);
+      }catch(error){
+        console.error("Nu s-a putut reîncărca lista evenimentelor:",error);
+      }
     }
 
     if(!source){
-      throw new Error("Evenimentul nu a fost găsit în lista încărcată.");
+      console.error("Evenimentul selectat nu există în events:",wanted,events);
+      return;
     }
 
     const ev=normalizeEventClient(source);
@@ -366,6 +368,14 @@
         ? events.find(e=>e.id===currentEvent.id)
         : (events[0]||null)
     );
+
+    // Selectăm și valoarea din dropdown înainte de randarea editorului.
+    // Astfel evenimentul ACTIV este vizibil ca selecție implicită.
+    if(currentEvent){
+      const selector=$("eventSelector");
+      if(selector) selector.value=String(currentEvent.id);
+    }
+
     renderEvents();
     if(!events.length){currentEvent=null;renderEvents();return}
     const id=currentEvent.id;

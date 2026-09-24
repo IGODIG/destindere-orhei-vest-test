@@ -211,32 +211,75 @@
   }
   function renderEvents(){
     const selector=$("eventSelector"),list=$("eventsList");
+
     if(selector){
-      selector.innerHTML=events.map(e=>"<option value=\""+esc(e.id)+"\">"+esc(e.name)+" • "+esc(e.status)+"</option>").join("");
+      selector.innerHTML=events.map(e=>{
+        const id=esc(e.id||"");
+        const name=esc(e.name||"Eveniment fără nume");
+        const status=esc(e.status||"PLANIFICAT");
+        return "<option value=\\\""+id+"\\\">"+name+" • "+status+"</option>";
+      }).join("");
       selector.value=currentEvent?.id||"";
     }
+
     if(list){
-      list.innerHTML=events.map(e=>{
-        // Lista centrală folosește metadata evenimentului ca sursă de adevăr
-        // pentru dată, oră și locație. ConfigJSON rămâne pentru editor.
-        const dateValue=e.date||"";
-        const rawTime=e.time||e.config?.event?.time||"";
-        const timeMatch=String(rawTime).match(/(?:^|\s)(\d{1,2}):(\d{2})(?::\d{2})?/);
-        const timeValue=timeMatch
-          ? String(timeMatch[1]).padStart(2,"0")+":"+timeMatch[2]
-          : "00:00";
-        const locationValue=e.location||"";
-        const themeValue=normalizeTheme(e.theme||e.config?.event?.theme||"auto");
-        const d=dateValue?new Date(dateValue+"T"+timeValue):null;
-        const date=d&&!isNaN(d)?new Intl.DateTimeFormat("ro-RO",{day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit"}).format(d):"Dată nespecificată";
-        const del=e.status!=="ACTIV",act=e.status==="PLANIFICAT",arch=e.status==="ACTIV";
-        return "<div class=\"event-manager-row "+(currentEvent?.id===e.id?"is-selected":"")+"\"><div class=\"event-manager-main\"><div class=\"event-manager-title\"><strong>"+esc(e.name||"Eveniment fără nume")+"</strong></div><div class=\"event-manager-meta\"><span>📅 "+esc(date)+"</span>"+(locationValue?"<span>📍 "+esc(locationValue)+"</span>":"")+"<span>"+themeLabel(themeValue)+"</span>+"</div></div><span class=\"event-row-status "+esc(e.status)+"\">"+esc(e.status)+"</span><div class=\"event-manager-actions\"><button type=\"button\" data-open=\""+esc(e.id)+"\">👁 Vezi</button>"+(act?"<button type=\"button\" class=\"row-activate\" data-activate=\""+esc(e.id)+"\">🟢 Activează</button>":"")+(del?"<button type=\"button\" class=\"row-delete\" data-delete=\""+esc(e.id)+"\">🗑 Șterge</button>":"")+"</div></div>";
-      }).join("");
+      if(!events.length){
+        list.innerHTML='<div class="note">Nu există evenimente disponibile.</div>';
+      }else{
+        list.innerHTML=events.map(e=>{
+          const dateValue=String(e.date||"").trim();
+          const rawTime=String(e.time||e.config?.event?.time||"").trim();
+          const timeMatch=rawTime.match(/(?:^|\\s)(\\d{1,2}):(\\d{2})(?::\\d{2})?/);
+          const timeValue=timeMatch
+            ? String(timeMatch[1]).padStart(2,"0")+":"+timeMatch[2]
+            : "00:00";
+
+          let date="Dată nespecificată";
+          if(/^\\d{4}-\\d{2}-\\d{2}$/.test(dateValue)){
+            const d=new Date(dateValue+"T"+timeValue);
+            if(!Number.isNaN(d.getTime())){
+              date=new Intl.DateTimeFormat("ro-RO",{
+                day:"2-digit",month:"2-digit",year:"numeric",
+                hour:"2-digit",minute:"2-digit"
+              }).format(d);
+            }
+          }
+
+          const locationValue=String(e.location||"").trim();
+          const themeValue=normalizeTheme(e.theme||e.config?.event?.theme||"auto");
+          const status=String(e.status||"PLANIFICAT").toUpperCase();
+          const selected=currentEvent?.id===e.id?"is-selected":"";
+          const canDelete=status!=="ACTIV";
+          const canActivate=status==="PLANIFICAT";
+          const canArchive=status==="ACTIV";
+
+          return `
+            <div class="event-manager-row ${selected}">
+              <div class="event-manager-main">
+                <div class="event-manager-title"><strong>${esc(e.name||"Eveniment fără nume")}</strong></div>
+                <div class="event-manager-meta">
+                  <span>📅 ${esc(date)}</span>
+                  ${locationValue?"<span>📍 "+esc(locationValue)+"</span>":""}
+                  <span>${themeLabel(themeValue)}</span>
+                </div>
+              </div>
+              <span class="event-row-status ${esc(status)}">${esc(status)}</span>
+              <div class="event-manager-actions">
+                <button type="button" data-open="${escAttr(e.id)}">👁 Vezi</button>
+                ${canActivate?'<button type="button" class="row-activate" data-activate="'+escAttr(e.id)+'">🟢 Activează</button>':""}
+                ${canArchive?'<button type="button" class="row-archive" data-archive="'+escAttr(e.id)+'">📦 Arhivează</button>':""}
+                ${canDelete?'<button type="button" class="row-delete" data-delete="'+escAttr(e.id)+'">🗑 Șterge</button>':""}
+              </div>
+            </div>`;
+        }).join("");
+      }
+
       list.querySelectorAll("[data-open]").forEach(b=>b.onclick=()=>previewEvent(b.dataset.open));
       list.querySelectorAll("[data-activate]").forEach(b=>b.onclick=()=>activate(b.dataset.activate));
       list.querySelectorAll("[data-archive]").forEach(b=>b.onclick=()=>archiveEvent(b.dataset.archive));
       list.querySelectorAll("[data-delete]").forEach(b=>b.onclick=()=>deleteEvent(b.dataset.delete));
     }
+
     const a=$("activateEventBtn"),ar=$("archiveEventBtn"),d=$("deleteEventBtn"),p=$("previewEventBtn");
     if(a)a.disabled=!currentEvent||currentEvent.status!=="PLANIFICAT";
     if(ar)ar.disabled=!currentEvent||currentEvent.status!=="ACTIV";

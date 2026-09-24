@@ -120,26 +120,44 @@ function initGoogleSheet() {
   // ÎNCĂRCARE DATE
   // ==========================================
 
-  function populateProductSelects() {
+  function populateProductSelects(produse) {
     const products = (CONFIG.food?.products || []).filter(function(product) {
       return product && product.enabled !== false && product.id;
     });
 
-    ["productId1", "productId2"].forEach(function(name) {
-      const select = document.querySelector('select[name="' + name + '"]');
-      if (!select) return;
+    const hideCompleted = CONFIG.food?.hideCompleted === true;
 
+    // Folosim aceeași sursă de date ca bara de progres.
+    // Astfel, un produs completat nu mai apare nici în dropdown
+    // atunci când opțiunea "Ascunde produsele completate" este activă.
+    const availableProducts = products.filter(function(product) {
+      if (!hideCompleted) return true;
+
+      const current = getCurrentForProduct(produse, product.id, product.name);
+      const required = toNumber(product.required);
+
+      return !(required > 0 && current >= required);
+    });
+
+    document.querySelectorAll('select[data-product-select], select[name^="productId"]').forEach(function(select) {
       const current = select.value;
-      select.innerHTML = '<option value="">Alege produsul...</option>';
+      const isFirst = select.name === "productId1";
+      select.innerHTML = '<option value="">' +
+        (availableProducts.length
+          ? (isFirst ? "Ce dorești să aduci?" : "Ce dorești să mai aduci?")
+          : "Toate produsele sunt completate") +
+        '</option>';
 
-      products.forEach(function(product) {
+      availableProducts.forEach(function(product) {
         const option = document.createElement("option");
         option.value = product.id;
         option.textContent = product.name + (product.unit ? " (" + product.unit + ")" : "");
         select.appendChild(option);
       });
 
-      if (current && products.some(function(product) { return product.id === current; })) {
+      if (current && availableProducts.some(function(product) {
+        return product.id === current;
+      })) {
         select.value = current;
       }
     });
@@ -168,7 +186,7 @@ function initGoogleSheet() {
           CONFIG.event.eventId = data.eventId;
         }
 
-        populateProductSelects();
+        populateProductSelects(getProductsData(data));
 
         // ==========================================
         // INVITAȚI
